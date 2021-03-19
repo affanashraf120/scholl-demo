@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, CardBody } from "reactstrap";
+import React from 'react';
+import { Card, CardBody } from 'reactstrap';
 
 const GradientCard = ({ children }) => {
   return (
@@ -10,4 +10,4 @@ const GradientCard = ({ children }) => {
     </Card>
   );
 };
-export default GradientCard;
+export default React.memo(GradientCard);

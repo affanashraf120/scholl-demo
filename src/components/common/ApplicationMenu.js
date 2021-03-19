@@ -1,67 +1,44 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { NavLink } from "reactstrap";
-export default class ApplicationMenu extends React.Component {
-  constructor(...params) {
-    super(...params);
-    this.handleDocumentClick = this.handleDocumentClick.bind(this);
-    this.toggle = this.toggle.bind(this);
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useRef, useEffect } from 'react';
+import { NavLink } from 'reactstrap';
 
-    this.state = {
-      isOpen: false
+const ApplicationMenu = ({ children }) => {
+  const containerRef = useRef();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleDocumentClick = (e) => {
+    if (isOpen) {
+      const container = containerRef.current;
+      if (container.contains(e.target) || container === e.target) {
+        return;
+      }
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    ['click', 'touchstart'].forEach((event) =>
+      document.addEventListener(event, handleDocumentClick, false)
+    );
+
+    return () => {
+      ['click', 'touchstart'].forEach((event) =>
+        document.removeEventListener(event, handleDocumentClick, false)
+      );
     };
-  }
+  }, [isOpen]);
 
-  handleDocumentClick(e) {
-    const container = ReactDOM.findDOMNode(this);
-    if (container.contains(e.target) || container === e.target) {
-      return;
-    }
+  return (
+    <div ref={containerRef} className={`app-menu ${isOpen ? 'shown' : ''}`}>
+      {children}
+      <NavLink
+        className="app-menu-button d-inline-block d-xl-none"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <i className="simple-icon-options" />
+      </NavLink>
+    </div>
+  );
+};
 
-    this.toggle(e);
-  }
-
-  toggle(e) {
-    e.preventDefault();
-    const isOpen = this.state.isOpen;
-    if (!isOpen) {
-      this.addEvents();
-    } else {
-      this.removeEvents();
-    }
-    this.setState({
-      isOpen: !isOpen
-    });
-  }
-
-  componentWillUnmount() {
-    this.removeEvents();
-  }
-
-  addEvents() {
-    ["click", "touchstart"].forEach(event =>
-      document.addEventListener(event, this.handleDocumentClick, true)
-    );
-  }
-
-  removeEvents() {
-    ["click", "touchstart"].forEach(event =>
-      document.removeEventListener(event, this.handleDocumentClick, true)
-    );
-  }
-
-  render() {
-    return (
-      <div className={`app-menu ${this.state.isOpen ? "shown" : ""}`}>
-        {this.props.children}
-
-        <NavLink
-          className="app-menu-button d-inline-block d-xl-none"
-          onClick={this.toggle}
-        >
-          <i className="simple-icon-options" />
-        </NavLink>
-      </div>
-    );
-  }
-}
+export default ApplicationMenu;

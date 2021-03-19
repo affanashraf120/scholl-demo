@@ -1,22 +1,22 @@
-import { all, call, fork, put, takeEvery } from "redux-saga/effects";
-import { getCurrentTime } from "../../helpers/Utils";
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { getCurrentTime } from '../../helpers/Utils';
 
 import {
   CHAT_GET_CONTACTS,
   CHAT_GET_CONVERSATIONS,
   CHAT_ADD_MESSAGE_TO_CONVERSATION,
-  CHAT_CREATE_CONVERSATION
-} from "../actions";
+  CHAT_CREATE_CONVERSATION,
+} from '../actions';
 
 import {
   getContactsSuccess,
   getContactsError,
   getConversationsSuccess,
-  getConversationsError
-} from "./actions";
+  getConversationsError,
+} from './actions';
 
-import contactsData from "../../data/chat.contacts.json";
-import conversationsData from "../../data/chat.conversations.json";
+import contactsData from '../../data/chat.contacts.json';
+import conversationsData from '../../data/chat.conversations.json';
 
 function* loadContacts() {
   try {
@@ -36,8 +36,8 @@ const loadContactsAsync = async () => {
       success({ contacts, currentUser });
     }, 2000);
   })
-    .then(response => response)
-    .catch(error => error);
+    .then((response) => response)
+    .catch((error) => error);
 };
 
 function* loadConversations(userId) {
@@ -52,15 +52,15 @@ function* loadConversations(userId) {
 
 const loadConversationsAsync = async ({ payload }) => {
   let conversations = conversationsData.data;
-  conversations = conversations.filter(x => x.users.includes(payload));
-  const selectedUser = conversations[0].users.find(x => x !== payload);
+  conversations = conversations.filter((x) => x.users.includes(payload));
+  const selectedUser = conversations[0].users.find((x) => x !== payload);
   return await new Promise((success, fail) => {
     setTimeout(() => {
       success({ conversations, selectedUser });
     }, 1000);
   })
-    .then(response => response)
-    .catch(error => error);
+    .then((response) => response)
+    .catch((error) => error);
 };
 
 function* addMessageToConversation({ payload }) {
@@ -69,7 +69,7 @@ function* addMessageToConversation({ payload }) {
       currentUserId,
       selectedUserId,
       message,
-      allConversations
+      allConversations,
     } = payload;
 
     const response = yield call(
@@ -91,18 +91,20 @@ const addMessageToConversationAsync = async (
   message,
   allConversations
 ) => {
-  let conversation = allConversations.find(
-    x => x.users.includes(currentUserId) && x.users.includes(selectedUserId)
+  const conversation = allConversations.find(
+    (x) => x.users.includes(currentUserId) && x.users.includes(selectedUserId)
   );
   const time = getCurrentTime();
   if (conversation) {
     conversation.messages.push({
       sender: currentUserId,
-      time: time,
-      text: message
+      time,
+      text: message,
     });
     conversation.lastMessageTime = time;
-    let conversations = allConversations.filter(x => x.id !== conversation.id);
+    const conversations = allConversations.filter(
+      (x) => x.id !== conversation.id
+    );
     conversations.splice(0, 0, conversation);
 
     return await new Promise((success, fail) => {
@@ -110,8 +112,8 @@ const addMessageToConversationAsync = async (
         success({ conversations, selectedUser: selectedUserId });
       }, 500);
     })
-      .then(response => response)
-      .catch(error => error);
+      .then((response) => response)
+      .catch((error) => error);
   }
 };
 
@@ -136,11 +138,11 @@ const createNewConversationAsync = async (
   selectedUserId,
   allConversations
 ) => {
-  let conversation = {
+  const conversation = {
     id: allConversations.length + 1,
     users: [currentUserId, selectedUserId],
-    lastMessageTime: "-",
-    messages: []
+    lastMessageTime: '-',
+    messages: [],
   };
 
   allConversations.splice(0, 0, conversation);
@@ -148,12 +150,12 @@ const createNewConversationAsync = async (
     setTimeout(() => {
       success({
         conversations: allConversations,
-        selectedUser: selectedUserId
+        selectedUser: selectedUserId,
       });
     }, 500);
   })
-    .then(response => response)
-    .catch(error => error);
+    .then((response) => response)
+    .catch((error) => error);
 };
 
 export function* watchGetContact() {
@@ -174,6 +176,6 @@ export default function* rootSaga() {
     fork(watchGetContact),
     fork(watchGetConversation),
     fork(watchAddMessageToConversation),
-    fork(watchCreateConversation)
+    fork(watchCreateConversation),
   ]);
 }

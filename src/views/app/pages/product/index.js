@@ -23,23 +23,23 @@ const PagesProduct = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/data-list`} />
       <Route
         path={`${match.url}/data-list`}
-        render={props => <DataList {...props} />}
+        render={(props) => <DataList {...props} />}
       />
       <Route
         path={`${match.url}/image-list`}
-        render={props => <ImageList {...props} />}
+        render={(props) => <ImageList {...props} />}
       />
       <Route
         path={`${match.url}/thumb-list`}
-        render={props => <ThumbList {...props} />}
+        render={(props) => <ThumbList {...props} />}
       />
       <Route
         path={`${match.url}/details`}
-        render={props => <Details {...props} />}
+        render={(props) => <Details {...props} />}
       />
       <Route
         path={`${match.url}/details-alt`}
-        render={props => <DetailsAlt {...props} />}
+        render={(props) => <DetailsAlt {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

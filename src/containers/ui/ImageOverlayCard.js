@@ -1,14 +1,15 @@
-import React from "react";
+import React from 'react';
 import {
   CardText,
   Row,
   Card,
   CardTitle,
   CardImg,
-  CardImgOverlay
-} from "reactstrap";
-import IntlMessages from "../../helpers/IntlMessages";
-import { Colxx } from "../../components/common/CustomBootstrap";
+  CardImgOverlay,
+} from 'reactstrap';
+import IntlMessages from '../../helpers/IntlMessages';
+import { Colxx } from '../../components/common/CustomBootstrap';
+
 const ImageOverlayCard = () => {
   return (
     <Row>
@@ -20,7 +21,7 @@ const ImageOverlayCard = () => {
           <Colxx xxs="12" xs="6" lg="3">
             <Card inverse className="mb-4">
               <CardImg
-                src="/assets/img/card-thumb-1.jpg"
+                src="/assets/img/cards/thumb-1.jpg"
                 alt="Card image cap"
               />
               <CardImgOverlay>

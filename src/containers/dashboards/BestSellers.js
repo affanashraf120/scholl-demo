@@ -1,126 +1,140 @@
-import React, { Component } from "react";
-import ReactTable from "react-table";
-import "react-table/react-table.css";
-import { Card, CardBody, CardTitle, CustomInput } from "reactstrap";
-import Pagination from "../../components/DatatablePagination";
-import IntlMessages from "../../helpers/IntlMessages";
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/display-name */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/jsx-key */
+import React from 'react';
+import { useTable, usePagination, useSortBy } from 'react-table';
+import { Card, CardBody, CardTitle } from 'reactstrap'; //
+import DatatablePagination from '../../components/DatatablePagination';
+import IntlMessages from '../../helpers/IntlMessages';
 
-import data from "../../data/products";
+import products from '../../data/products';
 
+function Table({ columns, data }) {
+  const {
+    getTableProps,
+    getTableBodyProps,
+    prepareRow,
+    headerGroups,
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageCount,
+    gotoPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    {
+      columns,
+      data,
+      initialState: { pageIndex: 0, pageSize: 6 },
+    },
+    useSortBy,
+    usePagination
+  );
 
-class BestSellers extends Component {
-  constructor() {
-    super();
-    this.state = {
-      selectAll: false,
-      data: [],
-      checked: []
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSingleCheckboxChange = this.handleSingleCheckboxChange.bind(
-      this
-    );
-  }
+  return (
+    <>
+      <table {...getTableProps()} className="r-table table">
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, columnIndex) => (
+                <th
+                  key={`th_${columnIndex}`}
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  className={
+                    column.isSorted
+                      ? column.isSortedDesc
+                        ? 'sorted-desc'
+                        : 'sorted-asc'
+                      : ''
+                  }
+                >
+                  {column.render('Header')}
+                  <span />
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell, cellIndex) => (
+                  <td
+                    key={`td_${cellIndex}`}
+                    {...cell.getCellProps({
+                      className: cell.column.cellClass,
+                    })}
+                  >
+                    {cell.render('Cell')}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
 
-  handleChange = () => {
-    var selectAll = !this.state.selectAll;
-    this.setState({ selectAll: selectAll });
-    var checkedCopy = [];
-    this.state.data.forEach(function (e, index) {
-      checkedCopy.push(selectAll);
-    });
-    this.setState({
-      checked: checkedCopy
-    }, () => {
-      console.log(this.state.checked);
-    });
-  };
-
-  handleSingleCheckboxChange = index => {
-    console.log(index);
-    var checkedCopy = this.state.checked;
-    checkedCopy[index] = !this.state.checked[index];
-    if (checkedCopy[index] === false) {
-      this.setState({ selectAll: false });
-    }
-    this.setState({
-      checked: checkedCopy
-    }, () => {
-      console.log(this.state.checked);
-    });
-  };
-
-  componentDidMount() {
-    const dataEdited = data.slice(0, 12);
-    var checkedCopy = [];
-    var selectAll = this.state.selectAll;
-    dataEdited.forEach(function (e, index) {
-      checkedCopy.push(selectAll);
-    });
-    this.setState({
-      data: dataEdited,
-      checked: checkedCopy,
-      selectAll: selectAll
-    });
-  }
-
-  render() {
-    return (
-      <Card className="h-100">
-        <CardBody>
-          <CardTitle>
-            <IntlMessages id={"dashboards.best-sellers"} />
-          </CardTitle>
-            <ReactTable
-              data={this.state.data}
-              defaultPageSize={6}
-              showPageJump={false}
-              showPageSizeOptions={false}
-              PaginationComponent={Pagination}
-              columns={[
-                {
-                  sortable: false,
-                  Header: (
-                    <CustomInput
-                      type="checkbox"
-                      id="checkAll"
-                      label="All"
-                      onChange={this.handleChange}
-                      checked={this.state.selectAll}
-                    />
-                  ),
-                  Cell: row => (
-                    <CustomInput
-                      type="checkbox"
-                      id={"check"+row.index}
-                      label=""
-                      checked={this.state.checked[row.index]}
-                      onChange={() => this.handleSingleCheckboxChange(row.index)}
-                    />
-                  ),
-                  filterable: false
-                },
-                {
-                  Header: "Name",
-                  accessor: "title",
-                  Cell: props => <p className="text-muted">{props.value}</p>
-                },
-                {
-                  Header: "Sales",
-                  accessor: "sales",
-                  Cell: props => <p className="text-muted">{props.value}</p>
-                },
-                {
-                  Header: "Stock",
-                  accessor: "stock",
-                  Cell: props => <p className="text-muted">{props.value}</p>
-                }
-              ]}
-            />
-        </CardBody>
-      </Card>
-    );
-  }
+      <DatatablePagination
+        page={pageIndex}
+        pages={pageCount}
+        canPrevious={canPreviousPage}
+        canNext={canNextPage}
+        pageSizeOptions={[4, 10, 20, 30, 40, 50]}
+        showPageSizeOptions={false}
+        showPageJump={false}
+        defaultPageSize={pageSize}
+        onPageChange={(p) => gotoPage(p)}
+        onPageSizeChange={(s) => setPageSize(s)}
+        paginationMaxSize={pageCount}
+      />
+    </>
+  );
 }
+
+const BestSellers = () => {
+  const cols = React.useMemo(
+    () => [
+      {
+        Header: 'Name',
+        accessor: 'title',
+        cellClass: 'text-muted w-50',
+        Cell: (props) => <>{props.value}</>,
+        sortType: 'basic',
+      },
+      {
+        Header: 'Sales',
+        accessor: 'sales',
+        cellClass: 'text-muted w-25',
+        Cell: (props) => <>{props.value}</>,
+        sortType: 'basic',
+      },
+      {
+        Header: 'Stock',
+        accessor: 'stock',
+        cellClass: 'text-muted w-25',
+        Cell: (props) => <>{props.value}</>,
+        sortType: 'basic',
+      },
+    ],
+    []
+  );
+
+  return (
+    <Card className="h-100">
+      <CardBody>
+        <CardTitle>
+          <IntlMessages id="dashboards.best-sellers" />
+        </CardTitle>
+        <Table columns={cols} data={products} />
+      </CardBody>
+    </Card>
+  );
+};
 
 export default BestSellers;

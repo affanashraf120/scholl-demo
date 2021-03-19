@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Card,
   CardBody,
@@ -6,13 +6,13 @@ import {
   UncontrolledDropdown,
   DropdownItem,
   DropdownToggle,
-  DropdownMenu
-} from "reactstrap";
+  DropdownMenu,
+} from 'reactstrap';
 
-import IntlMessages from "../../helpers/IntlMessages";
-import {LineChart} from "../../components/charts"
+import IntlMessages from '../../helpers/IntlMessages';
+import { LineChart } from '../../components/charts';
 
-import { lineChartData } from "../../data/charts";
+import { lineChartData } from '../../data/charts';
 
 const SalesChartCard = () => {
   return (

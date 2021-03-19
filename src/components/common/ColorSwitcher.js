@@ -1,150 +1,157 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import {
-  themeColorStorageKey,
-  themeRadiusStorageKey
-} from '../../constants/defaultValues';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useRef, useEffect } from 'react';
 import { FormGroup, Label, CustomInput } from 'reactstrap';
-class ColorSwitcher extends Component {
-  constructor(props) {
-    super();
+import { colors } from '../../constants/defaultValues';
+import { getCurrentColor, setCurrentColor, getCurrentRadius, setCurrentRadius } from '../../helpers/Utils';
 
-    this.state = {
-      isOpen: false,
-      selectedColor: localStorage.getItem(themeColorStorageKey),
-      radius: localStorage.getItem(themeRadiusStorageKey) || 'rounded'
-    };
-    this.removeEvents();
-  }
+const ColorSwitcher = () => {
+  const containerRef = useRef();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedColor] = useState(getCurrentColor());
+  const [radius, setRadius] = useState(getCurrentRadius());
 
-  getContainer = () => {
-    return ReactDOM.findDOMNode(this);
-  };
-
-  toggle = e => {
-    e.preventDefault();
-    const isOpen = this.state.isOpen;
-    if (!isOpen) {
-      this.addEvents();
-    } else {
-      this.removeEvents();
-    }
-    this.setState({
-      isOpen: !isOpen
-    });
-  };
-  changeThemeColor = (e, color) => {
-    e.preventDefault();
-    localStorage.setItem(themeColorStorageKey, color);
-    this.toggle(e);
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
-  };
-
-  componentDidMount() {
-    this.changeRadius(this.state.radius);
-  }
-
-  addEvents = () => {
-    ['click', 'touchstart'].forEach(event =>
-      document.addEventListener(event, this.handleDocumentClick, true)
-    );
-  };
-  removeEvents = () => {
-    ['click', 'touchstart'].forEach(event =>
-      document.removeEventListener(event, this.handleDocumentClick, true)
-    );
-  };
-
-  handleDocumentClick = e => {
-    const container = this.getContainer();
-    if (container.contains(e.target) || container === e.target) {
-      return;
-    }
-    this.toggle(e);
-  };
-  changeRadius = radius => {
+  useEffect(() => {
     if (radius === 'flat') {
       document.body.classList.remove('rounded');
     } else {
       document.body.classList.add('rounded');
     }
-    this.setState({
-      radius
-    });
-    localStorage.setItem(themeRadiusStorageKey, radius);
+    setCurrentRadius(radius);
+    if (isOpen) setIsOpen(false);
+  }, [radius]);
+
+  const handleDocumentClick = (e) => {
+    if (isOpen) {
+      const container = containerRef.current;
+      if (container.contains(e.target) || container === e.target) {
+        return;
+      }
+      setIsOpen(false);
+    }
   };
 
-  render() {
-    const { selectedColor, radius } = this.state;
-    return (
-      <div className={`theme-colors ${this.state.isOpen ? 'shown' : ''}`}>
-        <div className="p-4">
-          <p className="text-muted mb-2">Light Theme</p>
-          <div className="d-flex flex-row justify-content-between mb-4">
-            {['purple', 'blue', 'green', 'orange', 'red'].map(color => (
-              <a
-                key={`light.${color}`}
-                href={`#light.${color}`}
-                className={`theme-color theme-color-${color} ${
-                  selectedColor === `light.${color}` ? 'active' : ''
-                }`}
-                onClick={e => this.changeThemeColor(e, `light.${color}`)}
-              >
-                <span>`light.${color}`</span>
-              </a>
-            ))}
-          </div>
-          <p className="text-muted mb-2">Dark Theme</p>
-          <div className="d-flex flex-row justify-content-between">
-            {['purple', 'blue', 'green', 'orange', 'red'].map(color => (
-              <a
-                key={`dark.${color}`}
-                href={`#dark.${color}`}
-                className={`theme-color theme-color-${color} ${
-                  selectedColor === `dark.${color}` ? 'active' : ''
-                }`}
-                onClick={e => this.changeThemeColor(e, `dark.${color}`)}
-              >
-                <span>`dark.${color}`</span>
-              </a>
-            ))}
-          </div>
-        </div>
-        <div className=" pb-0 pl-4 pt-4">
-          <FormGroup>
-            <Label for="radiusRadio">Border Radius </Label>
-            <div>
-              <CustomInput
-                type="radio"
-                name="radiusRadio"
-                id="rounded"
-                label="Rounded"
-                inline
-                defaultChecked={radius === 'rounded'}
-                onChange={() => this.changeRadius('rounded')}
-              />
-              <CustomInput
-                type="radio"
-                name="radiusRadio"
-                id="flat"
-                label="Flat"
-                inline
-                defaultChecked={radius === 'flat'}
-                onChange={() => this.changeRadius('flat')}
-              />
-            </div>
-          </FormGroup>
-        </div>
-
-        <a href="#section" className="theme-button" onClick={this.toggle}>
-          {' '}
-          <i className="simple-icon-magic-wand" />{' '}
-        </a>
-      </div>
+  useEffect(() => {
+    ['click', 'touchstart'].forEach((event) =>
+      document.addEventListener(event, handleDocumentClick, false)
     );
-  }
-}
+
+    return () => {
+      ['click', 'touchstart'].forEach((event) =>
+        document.removeEventListener(event, handleDocumentClick, false)
+      );
+    };
+  }, [isOpen]);
+
+  const changeThemeColor = (e, color) => {
+    e.preventDefault();
+    setCurrentColor(color)
+    setIsOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  };
+
+  return (
+    <div ref={containerRef} className={`theme-colors ${isOpen ? 'shown' : ''}`}>
+      <div className="p-4">
+        <p className="text-muted mb-2">Light Theme</p>
+        <div className="d-flex flex-row justify-content-between mb-3">
+          {colors.slice(0, 5).map((color) => (
+            <a
+              key={`light.${color}`}
+              href={`#light.${color}`}
+              className={`theme-color theme-color-${color} ${
+                selectedColor === `light.${color}` ? 'active' : ''
+                }`}
+              onClick={(e) => changeThemeColor(e, `light.${color}`)}
+            >
+              <span>{` `}</span>
+            </a>
+          ))}
+        </div>
+        <div className="d-flex flex-row justify-content-between mb-4">
+          {colors.slice(5, 10).map((color) => (
+            <a
+              key={`light.${color}`}
+              href={`#light.${color}`}
+              className={`theme-color theme-color-${color} ${
+                selectedColor === `light.${color}` ? 'active' : ''
+                }`}
+              onClick={(e) => changeThemeColor(e, `light.${color}`)}
+            >
+              <span>{` `}</span>
+            </a>
+          ))}
+        </div>
+        <p className="text-muted mb-2">Dark Theme</p>
+        <div className="d-flex flex-row justify-content-between mb-3">
+          {colors.slice(0, 5).map((color) => (
+            <a
+              key={`dark.${color}`}
+              href={`#dark.${color}`}
+              className={`theme-color theme-color-${color} ${
+                selectedColor === `dark.${color}` ? 'active' : ''
+                }`}
+              onClick={(e) => changeThemeColor(e, `dark.${color}`)}
+            >
+              <span>{` `}</span>
+            </a>
+          ))}
+        </div>
+        <div className="d-flex flex-row justify-content-between">
+          {colors.slice(5, 10).map((color) => (
+            <a
+              key={`dark.${color}`}
+              href={`#dark.${color}`}
+              className={`theme-color theme-color-${color} ${
+                selectedColor === `dark.${color}` ? 'active' : ''
+                }`}
+              onClick={(e) => changeThemeColor(e, `dark.${color}`)}
+            >
+              <span>{` `}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div className=" pb-0 pl-4 pt-4">
+        <FormGroup>
+          <Label for="radiusRadio">Border Radius </Label>
+          <div>
+            <CustomInput
+              type="radio"
+              name="radiusRadio"
+              id="rounded"
+              label="Rounded"
+              inline
+              defaultChecked={radius === 'rounded'}
+              onChange={() => setRadius('rounded')}
+            />
+            <CustomInput
+              type="radio"
+              name="radiusRadio"
+              id="flat"
+              label="Flat"
+              inline
+              defaultChecked={radius === 'flat'}
+              onChange={() => setRadius('flat')}
+            />
+          </div>
+        </FormGroup>
+      </div>
+
+      <a
+        href="#section"
+        className="theme-button"
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
+      >
+        {' '}
+        <i className="simple-icon-magic-wand" />{' '}
+      </a>
+    </div>
+  );
+};
 
 export default ColorSwitcher;

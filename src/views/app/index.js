@@ -1,87 +1,73 @@
-import React, { Component, Suspense } from "react";
-import { Route, withRouter, Switch, Redirect } from "react-router-dom";
-import { connect } from "react-redux";
+import React, { Suspense } from 'react';
+import { Route, withRouter, Switch, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-import AppLayout from "../../layout/AppLayout";
+import AppLayout from '../../layout/AppLayout';
+// import { ProtectedRoute, UserRole } from '../../helpers/authHelper';
 
-//Custom pages added
-// import Students from "./customPages/Students";
-// import Teachers from "./customPages/Teachers";
-// import Parents from "./customPages/Parents";
-import Dashboard from "./customPages/Dashboard";
-
-// const Dashboards = React.lazy(() =>
-//   import(/* webpackChunkName: "dashboards" */ "./dashboards")
-// );
-// const Pages = React.lazy(() =>
-//   import(/* webpackChunkName: "pages" */ "./pages")
-// );
-// const Applications = React.lazy(() =>
-//   import(/* webpackChunkName: "applications" */ "./applications")
-// );
-// const Ui = React.lazy(() => import(/* webpackChunkName: "ui" */ "./ui"));
-// const Menu = React.lazy(() => import(/* webpackChunkName: "menu" */ "./menu"));
+const Dashboards = React.lazy(() =>
+  import(/* webpackChunkName: "dashboards" */ './dashboards')
+);
+const Pages = React.lazy(() =>
+  import(/* webpackChunkName: "pages" */ './pages')
+);
+const Applications = React.lazy(() =>
+  import(/* webpackChunkName: "applications" */ './applications')
+);
+const Ui = React.lazy(() => import(/* webpackChunkName: "ui" */ './ui'));
+const Menu = React.lazy(() => import(/* webpackChunkName: "menu" */ './menu'));
 const BlankPage = React.lazy(() =>
-  import(/* webpackChunkName: "blank-page" */ "./blank-page")
-);
-const DataList = React.lazy(() =>
-  import(/* webpackChunkName: "product-data-list" */ './pages/product/data-list')
+  import(/* webpackChunkName: "blank-page" */ './blank-page')
 );
 
-class App extends Component {
-  render() {
-    const { match } = this.props;
+const App = ({ match }) => {
+  return (
+    <AppLayout>
+      <div className="dashboard-wrapper">
+        <Suspense fallback={<div className="loading" />}>
+          <Switch>
+            <Redirect
+              exact
+              from={`${match.url}/`}
+              to={`${match.url}/dashboards`}
+            />
+            <Route
+              path={`${match.url}/dashboards`}
+              render={(props) => <Dashboards {...props} />}
+            />
+            <Route
+              path={`${match.url}/applications`}
+              render={(props) => <Applications {...props} />}
+            />
+            {/* <ProtectedRoute
+                    path={`${match.url}/applications`}
+                    component={Applications}
+                    roles={[UserRole.Admin]}
+            /> */}
+            <Route
+              path={`${match.url}/pages`}
+              render={(props) => <Pages {...props} />}
+            />
+            <Route
+              path={`${match.url}/ui`}
+              render={(props) => <Ui {...props} />}
+            />
+            <Route
+              path={`${match.url}/menu`}
+              render={(props) => <Menu {...props} />}
+            />
+            <Route
+              path={`${match.url}/blank-page`}
+              render={(props) => <BlankPage {...props} />}
+            />
+            <Redirect to="/error" />
+          </Switch>
+        </Suspense>
+      </div>
+    </AppLayout>
+  );
+};
 
-    return (
-      <AppLayout>
-        <div className="dashboard-wrapper">
-          <Suspense fallback={<div className="loading" />}>
-            <Switch>
-              <Redirect
-                exact
-                from={`${match.url}/`}
-                to={`${match.url}/dashboard`}
-              />
-              <Route
-                path={`${match.url}/dashboard`}
-                render={(props) => <Dashboard {...props} />}
-              />
-              <Route
-                path={`${match.url}/students`}
-                render={(props) => <DataList {...props} />}
-              />
-              <Route
-                path={`${match.url}/teachers`}
-                render={(props) => <DataList {...props} />}
-              />
-              <Route
-                path={`${match.url}/parents`}
-                render={(props) => <DataList {...props} />}
-              />
-              <Route
-                path={`${match.url}/courses`}
-                render={(props) => <DataList {...props} />}
-              />
-              <Route
-                path={`${match.url}/classes`}
-                render={(props) => <BlankPage {...props} />}
-              />
-              <Route
-                path={`${match.url}/attendence`}
-                render={(props) => <BlankPage {...props} />}
-              />
-              <Route
-                path={`${match.url}/settings`}
-                render={(props) => <BlankPage {...props} />}
-              />
-              <Redirect to="/error" />
-            </Switch>
-          </Suspense>
-        </div>
-      </AppLayout>
-    );
-  }
-}
 const mapStateToProps = ({ menu }) => {
   const { containerClassnames } = menu;
   return { containerClassnames };

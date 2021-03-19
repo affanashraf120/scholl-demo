@@ -1,10 +1,11 @@
-import React from "react";
-import { Card, CardBody, CardTitle, Progress } from "reactstrap";
+/* eslint-disable react/no-array-index-key */
+import React from 'react';
+import { Card, CardBody, CardTitle, Progress } from 'reactstrap';
 
-import IntlMessages from "../../helpers/IntlMessages";
-import data from "../../data/profileStatuses";
+import IntlMessages from '../../helpers/IntlMessages';
+import data from '../../data/profileStatuses';
 
-const ProfileStatuses = ({cardClass="h-100"}) => {
+const ProfileStatuses = ({ cardClass = 'h-100' }) => {
   return (
     <Card className={cardClass}>
       <CardBody>

@@ -14,11 +14,11 @@ const UI = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/types`} />
       <Route
         path={`${match.url}/types`}
-        render={props => <MenuTypes {...props} />}
+        render={(props) => <MenuTypes {...props} />}
       />
       <Route
         path={`${match.url}/levels`}
-        render={props => <Levels {...props} />}
+        render={(props) => <Levels {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

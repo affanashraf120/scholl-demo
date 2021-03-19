@@ -1,9 +1,9 @@
-import React from "react";
-import { Card, CardBody, CardTitle } from "reactstrap";
-import IntlMessages from "../../helpers/IntlMessages";
-import Rating from "../../components/common/Rating";
-import data from "../../data/topRatedItems";
-import GlideComponent from "../../components/carousel/GlideComponent";
+import React from 'react';
+import { Card, CardBody, CardTitle } from 'reactstrap';
+import IntlMessages from '../../helpers/IntlMessages';
+import Rating from '../../components/common/Rating';
+import data from '../../data/topRatedItems';
+import GlideComponent from '../../components/carousel/GlideComponent';
 
 const TopRatedItem = ({ image, order, title, rate, rateCount }) => (
   <div>
@@ -24,27 +24,27 @@ const TopRatedItems = () => {
         <CardTitle>
           <IntlMessages id="dashboards.top-rated-items" />
         </CardTitle>
-        <GlideComponent settings={
-          {
+        <GlideComponent
+          settings={{
             gap: 5,
             perView: 1,
-            type: "carousel",
+            type: 'carousel',
             peek: { before: 0, after: 100 },
             breakpoints: {
               480: { perView: 1 },
               992: { perView: 2 },
-              1200: { perView: 1 }
+              1200: { perView: 1 },
             },
-            hideNav: true
-          }
-        }>
-        {data.map(item => {
-          return (
-            <div key={item.id}>
-              <TopRatedItem  {...item} />
-            </div>
-          );
-        })}
+            hideNav: true,
+          }}
+        >
+          {data.map((item) => {
+            return (
+              <div key={item.id}>
+                <TopRatedItem {...item} />
+              </div>
+            );
+          })}
         </GlideComponent>
       </CardBody>
     </Card>

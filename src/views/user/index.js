@@ -23,19 +23,19 @@ const User = ({ match }) => {
           <Redirect exact from={`${match.url}/`} to={`${match.url}/login`} />
           <Route
             path={`${match.url}/login`}
-            render={props => <Login {...props} />}
+            render={(props) => <Login {...props} />}
           />
           <Route
             path={`${match.url}/register`}
-            render={props => <Register {...props} />}
+            render={(props) => <Register {...props} />}
           />
           <Route
             path={`${match.url}/forgot-password`}
-            render={props => <ForgotPassword {...props} />}
+            render={(props) => <ForgotPassword {...props} />}
           />
           <Route
             path={`${match.url}/reset-password`}
-            render={props => <ResetPassword {...props} />}
+            render={(props) => <ResetPassword {...props} />}
           />
           <Redirect to="/error" />
         </Switch>

@@ -1,84 +1,71 @@
-import Autosuggest from "react-autosuggest";
-import React from "react";
+import React, { useState } from 'react';
+import Autosuggest from 'react-autosuggest';
 
-export default class ReactAutoSuggest extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: this.props.value,
-      suggestions: [],
-      data: this.props.data || []
-    };
-  }
+const getSuggestionValue = (suggestion) => suggestion.name;
 
-  static getDerivedStateFromProps(props, state) {
-    return {value: props.value}
-  }
+const renderSuggestion = (suggestion) => <div>{suggestion.name}</div>;
 
-  getSuggestionValue = suggestion => suggestion.name;
+const ReactAutoSuggest = ({ data, value, placeholder, onChange }) => {
+  const [valueState, setValueState] = useState(value);
+  const [dataState] = useState(data || []);
+  const [suggestions, setSuggestions] = useState([]);
 
-  renderSuggestion = suggestion => <div>{suggestion.name}</div>;
+  const getSuggestions = (val) => {
+    if (val) {
+      const inputValue = val.trim().toLowerCase();
+      const inputLength = inputValue.length;
 
-  getSuggestions = value => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
-
-    return inputLength === 0
-      ? []
-      : this.state.data.filter(
-          lang => lang.name.toLowerCase().slice(0, inputLength) === inputValue
-        );
+      return inputLength === 0
+        ? []
+        : dataState.filter(
+            (d) => d.name.toLowerCase().slice(0, inputLength) === inputValue
+          );
+    }
+    return dataState;
   };
 
-  onChange = (event, { newValue }) => {
-    this.setState({
-      value: newValue
-    });
-    this.props.onChange && this.props.onChange(newValue);
+  const changeInput = (event, { newValue }) => {
+    setValueState(newValue);
+    onChange(newValue);
   };
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: this.getSuggestions(value)
-    });
+  const onSuggestionsFetchRequested = ({ value: val }) => {
+    setSuggestions(getSuggestions(val));
   };
 
-  onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: []
-    });
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
   };
 
-  render() {
-    const { value, suggestions } = this.state;
-    const inputProps = {
-      placeholder: this.props.placeholder || "",
-      value,
-      onChange: this.onChange
-    };
+  const inputProps = {
+    placeholder: placeholder || '',
+    value: valueState,
+    onChange: changeInput,
+  };
 
-    return (
-      <Autosuggest
-        suggestions={suggestions}
-        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-        getSuggestionValue={this.getSuggestionValue}
-        renderSuggestion={this.renderSuggestion}
-        inputProps={inputProps}
-        theme={{
-          container: "autosuggest",
-          input: "form-control",
-          inputOpen: "react-autosuggest__input--open",
-          suggestionsContainer: "react-autosuggest__suggestions-container",
-          suggestionsContainerOpen:
-            "react-autosuggest__suggestions-container--open",
-          suggestionsList: `react-autosuggest__suggestions-list ${
-            this.state.suggestions.length ? "show" : ""
-          }`,
-          suggestionFocused: "active",
-          suggestion: "react-autosuggest__suggestion"
-        }}
-      />
-    );
-  }
-}
+  return (
+    <Autosuggest
+      suggestions={suggestions}
+      onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+      onSuggestionsClearRequested={onSuggestionsClearRequested}
+      getSuggestionValue={getSuggestionValue}
+      renderSuggestion={renderSuggestion}
+      inputProps={inputProps}
+      theme={{
+        container: 'autosuggest',
+        input: 'form-control',
+        inputOpen: 'react-autosuggest__input--open',
+        suggestionsContainer: 'react-autosuggest__suggestions-container',
+        suggestionsContainerOpen:
+          'react-autosuggest__suggestions-container--open',
+        suggestionsList: `react-autosuggest__suggestions-list ${
+          suggestions.length ? 'show' : ''
+        }`,
+        suggestionFocused: 'active',
+        suggestion: 'react-autosuggest__suggestion',
+      }}
+    />
+  );
+};
+
+export default ReactAutoSuggest;

@@ -1,158 +1,127 @@
-import React, { Component, Fragment } from "react";
-import { Row, Card, CardBody } from "reactstrap";
-import IntlMessages from "../../../../helpers/IntlMessages";
-import { Colxx, Separator } from "../../../../components/common/CustomBootstrap";
-import Breadcrumb from "../../../../containers/navs/Breadcrumb";
-import Sortable from "react-sortablejs";
+import React, { useState } from 'react';
+import { Row, Card, CardBody } from 'reactstrap';
+import { ReactSortable } from 'react-sortablejs';
+import IntlMessages from '../../../../helpers/IntlMessages';
+import {
+  Colxx,
+  Separator,
+} from '../../../../components/common/CustomBootstrap';
+import Breadcrumb from '../../../../containers/navs/Breadcrumb';
 
+const SortableUi = ({ match }) => {
+  const [listColumns, setListColumns] = useState([
+    {
+      icon: 'iconsminds-clock',
+      title: 'Pending Orders',
+      value: 14,
+      id: 1,
+    },
+    {
+      icon: 'iconsminds-basket-coins',
+      title: 'Completed Orders',
+      value: 32,
+      id: 2,
+    },
+    {
+      icon: 'iconsminds-arrow-refresh',
+      title: 'Refund Requests',
+      value: 74,
+      id: 3,
+    },
+    {
+      icon: 'iconsminds-mail-read',
+      title: 'New Comments',
+      value: 25,
+      id: 4,
+    },
+  ]);
+  const [listBasic, setListBasic] = useState([
+    {
+      id: 1,
+      title: 'Angel Cake',
+    },
+    {
+      id: 2,
+      title: 'Bibingka',
+    },
+    {
+      id: 3,
+      title: 'Cremeschnitte',
+    },
+    {
+      id: 4,
+      title: 'Faworki',
+    },
+  ]);
 
-export default class SortableUi extends Component {
-  render() {
-    return (
-      <Fragment>
-        <Row>
-          <Colxx xxs="12">
-            <Breadcrumb heading="menu.sortable" match={this.props.match} />
-            <Separator className="mb-5" />
-          </Colxx>
-        </Row>
-        <Row>
-          <Colxx xxs="12">
-            <h5 className="mb-4">
-              <IntlMessages id="sortable.columns" />
-            </h5>
-
-            <Sortable className="row icon-cards-row mb-2">
-              <Colxx xxs="6" sm="4" md="3" className="mb-4">
+  return (
+    <>
+      <Row>
+        <Colxx xxs="12">
+          <Breadcrumb heading="menu.sortable" match={match} />
+          <Separator className="mb-5" />
+        </Colxx>
+      </Row>
+      <Row>
+        <Colxx xxs="12">
+          <h5 className="mb-4">
+            <IntlMessages id="sortable.columns" />
+          </h5>
+          <ReactSortable
+            className="row icon-cards-row mb-2"
+            list={listColumns}
+            setList={(list) => setListColumns(list)}
+          >
+            {listColumns.map((item) => (
+              <Colxx
+                key={`column_${item.id}`}
+                xxs="6"
+                sm="4"
+                md="3"
+                className="mb-4"
+              >
                 <Card>
                   <CardBody className="text-center">
-                    <i className="iconsminds-clock" />
+                    <i className={item.icon} />
                     <p className="card-text font-weight-semibold mb-0">
-                      Pending Orders
+                      {item.title}
                     </p>
-                    <p className="lead text-center">14</p>
+                    <p className="lead text-center">{item.value}</p>
                   </CardBody>
                 </Card>
               </Colxx>
+            ))}
+          </ReactSortable>
+        </Colxx>
+      </Row>
+      <Row>
+        <Colxx xxs="12">
+          <h5 className="mb-4">
+            <IntlMessages id="sortable.basic" />
+          </h5>
 
-              <Colxx xxs="6" sm="4" md="3" className="mb-4">
-                <Card>
-                  <CardBody className="text-center">
-                    <i className="iconsminds-basket-coins" />
-                    <p className="card-text font-weight-semibold mb-0">
-                      Completed Orders
-                    </p>
-                    <p className="lead text-center">32</p>
-                  </CardBody>
-                </Card>
-              </Colxx>
-              <Colxx xxs="6" sm="4" md="3" className="mb-4">
-                <Card>
-                  <CardBody className="text-center">
-                    <i className="iconsminds-arrow-refresh" />
-                    <p className="card-text font-weight-semibold mb-0">
-                      Refund Requests
-                    </p>
-                    <p className="lead text-center">74</p>
-                  </CardBody>
-                </Card>
-              </Colxx>
-              <Colxx xxs="6" sm="4" md="3" className="mb-4">
-                <Card>
-                  <CardBody className="text-center">
-                    <i className="iconsminds-mail-read" />
-                    <p className="card-text font-weight-semibold mb-0">
-                      New Comments
-                    </p>
-                    <p className="lead text-center">25</p>
-                  </CardBody>
-                </Card>
-              </Colxx>
-            </Sortable>
-          </Colxx>
-        </Row>
-
-        <Row>
-          <Colxx xxs="12">
-            <h5 className="mb-4">
-              <IntlMessages id="sortable.basic" />
-            </h5>
-
-            <Card className="mb-4">
-              <CardBody>
-                <Sortable tag="ul" className="list-unstyled">
-                  <li>
-                    <p>1. Angel Cake</p>
-                  </li>
-                  <li>
-                    <p>2. Bibingka</p>
-                  </li>
-                  <li>
-                    <p>3. Cremeschnitte</p>
-                  </li>
-                  <li>
-                    <p>4. Faworki</p>
-                  </li>
-                </Sortable>
-              </CardBody>
-            </Card>
-          </Colxx>
-        </Row>
-
-        <Row>
-          <Colxx xxs="12">
-            <h5 className="mb-4">
-              <IntlMessages id="sortable.handles" />
-            </h5>
-            <Card className="mb-4">
-              <CardBody>
-                <Sortable
-                  tag="ul"
-                  className="list-unstyled"
-                  options={{
-                    handle: ".handle"
-                  }}
-                >
-                  <li>
+          <Card className="mb-4">
+            <CardBody>
+              <ReactSortable
+                list={listBasic}
+                setList={(list) => setListBasic(list)}
+                tag="ul"
+                className="list-unstyled"
+              >
+                {listBasic.map((item) => (
+                  <li key={`basic_${item.id}`}>
                     <p>
-                      <span className="badge badge-pill badge-secondary handle mr-1">
-                        <i className="simple-icon-cursor-move" />
-                      </span>
-                      <span>Angel Cake</span>
+                      {item.id}. {item.title}
                     </p>
                   </li>
-                  <li>
-                    <p>
-                      <span className="badge badge-pill badge-secondary handle mr-1">
-                      <i className="simple-icon-cursor-move" />
-                      </span>
-                      Bibingka
-                    </p>
-                  </li>
-                  <li>
-                    <p>
-                      <span className="badge badge-pill badge-secondary handle mr-1">
-                      <i className="simple-icon-cursor-move" />
-                      </span>
-                      Cremeschnitte
-                    </p>
-                  </li>
-                  <li>
-                    <p>
-                      <span className="badge badge-pill badge-secondary handle mr-1">
-                      <i className="simple-icon-cursor-move" />
-                      </span>
-                      Faworki
-                    </p>
-                  </li>
-                </Sortable>
-              </CardBody>
-            </Card>
-          </Colxx>
-        </Row>
-     
+                ))}
+              </ReactSortable>
+            </CardBody>
+          </Card>
+        </Colxx>
+      </Row>
+    </>
+  );
+};
 
-      </Fragment>
-    );
-  }
-}
+export default SortableUi;

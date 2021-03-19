@@ -20,19 +20,19 @@ const Pages = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/product`} />
       <Route
         path={`${match.url}/product`}
-        render={props => <Product {...props} />}
+        render={(props) => <Product {...props} />}
       />
       <Route
         path={`${match.url}/profile`}
-        render={props => <Profile {...props} />}
+        render={(props) => <Profile {...props} />}
       />
       <Route
         path={`${match.url}/blog`}
-        render={props => <Blog {...props} />}
+        render={(props) => <Blog {...props} />}
       />
       <Route
         path={`${match.url}/miscellaneous`}
-        render={props => <Miscellaneous {...props} />}
+        render={(props) => <Miscellaneous {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

@@ -1,71 +1,52 @@
-import React, { Component, Suspense } from "react";
-import { connect } from "react-redux";
+import React, { Suspense } from 'react';
+import { connect } from 'react-redux';
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
-} from "react-router-dom";
-import { IntlProvider } from "react-intl";
-import "./helpers/Firebase";
-import AppLocale from "./lang";
-import ColorSwitcher from "./components/common/ColorSwitcher";
-// import NotificationContainer from "./components/common/react-notifications/NotificationContainer";
-import {
-  isMultiColorActive,
-  isDemo,
-  // adminRoot,
-} from "./constants/defaultValues";
-import { getDirection } from "./helpers/Utils";
+} from 'react-router-dom';
+import { IntlProvider } from 'react-intl';
+import './helpers/Firebase';
+import AppLocale from './lang';
+import ColorSwitcher from './components/common/ColorSwitcher';
+import { NotificationContainer } from './components/common/react-notifications';
+import { isMultiColorActive, adminRoot } from './constants/defaultValues';
+import { getDirection } from './helpers/Utils';
+import { ProtectedRoute, UserRole } from './helpers/authHelper';
 
-const ViewMain = React.lazy(() =>
-  import(/* webpackChunkName: "views" */ "./views")
+const ViewHome = React.lazy(() =>
+  import(/* webpackChunkName: "views" */ './views/home')
 );
 const ViewApp = React.lazy(() =>
-  import(/* webpackChunkName: "views-app" */ "./views/app")
+  import(/* webpackChunkName: "views-app" */ './views/app')
 );
-// const ViewUser = React.lazy(() =>
-//   import(/* webpackChunkName: "views-user" */ "./views/user")
-// );
-// const ViewError = React.lazy(() =>
-//   import(/* webpackChunkName: "views-error" */ "./views/error")
-// );
+const ViewUser = React.lazy(() =>
+  import(/* webpackChunkName: "views-user" */ './views/user')
+);
+const ViewError = React.lazy(() =>
+  import(/* webpackChunkName: "views-error" */ './views/error')
+);
+const ViewUnauthorized = React.lazy(() =>
+  import(/* webpackChunkName: "views-error" */ './views/unauthorized')
+);
 
-const AuthRoute = ({ component: Component, authUser, ...rest }) => {
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        authUser || isDemo ? (
-          <Component {...props} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/user/login",
-              state: { from: props.location },
-            }}
-          />
-        )
-      }
-    />
-  );
-};
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     const direction = getDirection();
     if (direction.isRtl) {
-      document.body.classList.add("rtl");
-      document.body.classList.remove("ltr");
+      document.body.classList.add('rtl');
+      document.body.classList.remove('ltr');
     } else {
-      document.body.classList.add("ltr");
-      document.body.classList.remove("rtl");
+      document.body.classList.add('ltr');
+      document.body.classList.remove('rtl');
     }
   }
 
   render() {
-    const { locale, loginUser } = this.props;
+    const { locale } = this.props;
     const currentAppLocale = AppLocale[locale];
 
     return (
@@ -74,49 +55,44 @@ class App extends Component {
           locale={currentAppLocale.locale}
           messages={currentAppLocale.messages}
         >
-          <React.Fragment>
-            {/* <NotificationContainer /> */}
+          <>
+            <NotificationContainer />
             {isMultiColorActive && <ColorSwitcher />}
             <Suspense fallback={<div className="loading" />}>
               <Router>
-                {/* <Switch>
-                  <AuthRoute
-                    path="/app"
-                    authUser={loginUser}
+                <Switch>
+                  <ProtectedRoute
+                    path={adminRoot}
                     component={ViewApp}
+                    roles={[UserRole.Admin, UserRole.Editor]}
                   />
                   <Route
                     path="/user"
-                    render={props => <ViewUser {...props} />}
+                    render={(props) => <ViewUser {...props} />}
                   />
                   <Route
                     path="/error"
                     exact
-                    render={props => <ViewError {...props} />}
+                    render={(props) => <ViewError {...props} />}
+                  />
+                  <Route
+                    path="/unauthorized"
+                    exact
+                    render={(props) => <ViewUnauthorized {...props} />}
                   />
                   <Route
                     path="/"
                     exact
-                    render={props => <ViewMain {...props} />}
+                    render={(props) => <ViewHome {...props} />}
                   />
-                  <Redirect to="/error" />
-                </Switch> */}
-                <Switch>
-                  <AuthRoute
-                    path="/app"
-                    authUser={loginUser}
-                    component={ViewApp}
-                  />
-                  <Route
-                    path="/"
-                    exact
-                    render={(props) => <ViewMain {...props} />}
-                  />
+                  {/*
+                  <Redirect exact from="/" to={adminRoot} />
+                  */}
                   <Redirect to="/error" />
                 </Switch>
               </Router>
             </Suspense>
-          </React.Fragment>
+          </>
         </IntlProvider>
       </div>
     );
@@ -124,9 +100,9 @@ class App extends Component {
 }
 
 const mapStateToProps = ({ authUser, settings }) => {
-  const { user: loginUser } = authUser;
+  const { currentUser } = authUser;
   const { locale } = settings;
-  return { loginUser, locale };
+  return { currentUser, locale };
 };
 const mapActionsToProps = {};
 

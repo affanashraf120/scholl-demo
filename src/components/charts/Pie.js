@@ -1,41 +1,45 @@
-import React from "react";
-import ChartComponent, { Chart } from "react-chartjs-2";
+/* eslint-disable prefer-rest-params */
+import React, { useEffect, useRef, useState } from 'react';
+import { Chart } from 'chart.js';
 
-import { pieChartOptions } from "./config";
+import { pieChartOptions } from './config';
 
-export default class Pie extends React.Component {
-  constructor(props) {
-    super(props);
-    if (this.props.shadow) {
-      Chart.defaults.pieWithShadow = Chart.defaults.pie;
-      Chart.controllers.pieWithShadow = Chart.controllers.pie.extend({
-        draw: function(ease) {
-          Chart.controllers.pie.prototype.draw.call(this, ease);
-          let ctx = this.chart.chart.ctx;
-          ctx.save();
-          ctx.shadowColor = "rgba(0,0,0,0.15)";
-          ctx.shadowBlur = 10;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 10;
-          ctx.responsive = true;
-          Chart.controllers.pie.prototype.draw.apply(this, arguments);
-          ctx.restore();
-        }
+const Pie = ({ data, shadow = false }) => {
+  const chartContainer = useRef(null);
+  const [, setChartInstance] = useState(null);
+
+  useEffect(() => {
+    if (chartContainer && chartContainer.current) {
+      if (shadow) {
+        Chart.defaults.pieWithShadow = Chart.defaults.pie;
+        Chart.controllers.pieWithShadow = Chart.controllers.pie.extend({
+          draw(ease) {
+            Chart.controllers.pie.prototype.draw.call(this, ease);
+            const {
+              chart: { ctx },
+            } = this;
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.15)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 10;
+            ctx.responsive = true;
+            Chart.controllers.pie.prototype.draw.apply(this, arguments);
+            ctx.restore();
+          },
+        });
+      }
+      const context = chartContainer.current.getContext('2d');
+      const newChartInstance = new Chart(context, {
+        type: shadow ? 'pieWithShadow' : 'pie',
+        options: pieChartOptions,
+        data,
       });
+      setChartInstance(newChartInstance);
     }
-  }
+  }, [chartContainer, data, shadow]);
 
-  render() {
-    const { data, shadow } = this.props;
-    return (
-      <ChartComponent
-        ref={ref => (this.chart_instance = ref && ref.chart_instance)}
-        type={shadow ? "pieWithShadow" : "pie"}
-        options={{
-          ...pieChartOptions
-        }}
-        data={data}
-      />
-    );
-  }
-}
+  return <canvas ref={chartContainer} />;
+};
+
+export default Pie;

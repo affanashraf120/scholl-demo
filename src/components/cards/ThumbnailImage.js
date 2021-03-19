@@ -1,19 +1,19 @@
-import React from "react";
-import classnames from "classnames";
-const ThumbnailImage = (props) => {
-    const { alt, src, className, rounded, small } = props;
+import React from 'react';
+import classnames from 'classnames';
+
+const ThumbnailImage = ({ alt, src, className, rounded, small }) => {
   return (
     <img
       alt={alt}
       src={src}
-      className={`img-thumbnail list-thumbnail align-self-center ${
-        className
-      }  ${classnames({
-        "rounded-circle": rounded,
-        small: small
-      })}`}
+      className={`img-thumbnail list-thumbnail align-self-center ${className}  ${classnames(
+        {
+          'rounded-circle': rounded,
+          small,
+        }
+      )}`}
     />
   );
 };
 
-export default ThumbnailImage;
+export default React.memo(ThumbnailImage);

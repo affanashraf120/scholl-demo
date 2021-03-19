@@ -1,24 +1,26 @@
-import React from "react";
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu } from "reactstrap";
-import PerfectScrollbar from "react-perfect-scrollbar";
+/* eslint-disable react/no-array-index-key */
+import React from 'react';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, NavLink } from 'reactstrap';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import notifications from '../../data/notifications';
+import { adminRoot } from '../../constants/defaultValues';
 
-import notifications from "../../data/notifications";
 
 const NotificationItem = ({ img, title, date }) => {
   return (
     <div className="d-flex flex-row mb-3 pb-3 border-bottom">
-      <a href="/app/pages/details">
+      <NavLink to={`${adminRoot}/pages/product/details`}>
         <img
           src={img}
           alt={title}
           className="img-thumbnail list-thumbnail xsmall border-0 rounded-circle"
         />
-      </a>
+      </NavLink>
       <div className="pl-3 pr-2">
-        <a href="/app/pages/details">
+        <NavLink to={`${adminRoot}/pages/product/details`}>
           <p className="font-weight-medium mb-1">{title}</p>
           <p className="text-muted mb-0 text-small">{date}</p>
-        </a>
+        </NavLink>
       </div>
     </div>
   );

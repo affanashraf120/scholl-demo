@@ -14,11 +14,11 @@ const PagesProfile = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/portfolio`} />
       <Route
         path={`${match.url}/portfolio`}
-        render={props => <Portfolio {...props} />}
+        render={(props) => <Portfolio {...props} />}
       />
       <Route
         path={`${match.url}/social`}
-        render={props => <Social {...props} />}
+        render={(props) => <Social {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

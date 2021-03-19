@@ -21,15 +21,15 @@ const MenuLevels = ({ match }) => (
       />
       <Route
         path={`${match.url}/third-level-1`}
-        render={props => <ThirdLevel1 {...props} />}
+        render={(props) => <ThirdLevel1 {...props} />}
       />
       <Route
         path={`${match.url}/third-level-2`}
-        render={props => <ThirdLevel2 {...props} />}
+        render={(props) => <ThirdLevel2 {...props} />}
       />
       <Route
         path={`${match.url}/third-level-3`}
-        render={props => <ThirdLevel3 {...props} />}
+        render={(props) => <ThirdLevel3 {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

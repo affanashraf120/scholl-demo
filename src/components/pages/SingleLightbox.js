@@ -1,40 +1,20 @@
-import React, { Component, Fragment }  from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import Lightbox from 'react-image-lightbox';
 
-class SingleLightbox extends Component {
+const SingleLightbox = ({ thumb, className, large }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    constructor(props) {
-        super(props);
-        this.onThumbClick = this.onThumbClick.bind(this);
-        this.state = {
-            photoIndex: 0,
-            isOpen: false,
-        };
-      }
+  return (
+    <>
+      <NavLink to="#" location={{}} onClick={() => setIsOpen(true)}>
+        <img src={thumb} alt="thumbnail" className={className} />
+      </NavLink>
 
-      onThumbClick() {
-        this.setState({ isOpen: true });
-    }
-
-
-    render() {
-        const { isOpen } = this.state;
-        return (
-            <Fragment>
-                <NavLink to="#" onClick={() => this.onThumbClick()}>
-                    <img src={this.props.thumb} alt="thumbnail" className={this.props.className}/>
-                </NavLink>
-
-                {isOpen && (
-                    <Lightbox
-                        mainSrc={this.props.large}
-                        onCloseRequest={() => this.setState({ isOpen: false })}
-                    />
-                )}
-            </Fragment>
-        );
-    }
-}
-
+      {isOpen && (
+        <Lightbox mainSrc={large} onCloseRequest={() => setIsOpen(false)} />
+      )}
+    </>
+  );
+};
 export default SingleLightbox;

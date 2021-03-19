@@ -1,41 +1,66 @@
-import React, { Component } from "react";
-import { injectIntl } from "react-intl";
-import { connect } from "react-redux";
-import { NavLink } from "react-router-dom";
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable no-use-before-define */
+import React, { useState } from 'react';
+import { injectIntl } from 'react-intl';
+
 import {
+  UncontrolledDropdown,
   DropdownItem,
+  DropdownToggle,
+  DropdownMenu,
+  Input,
+} from 'reactstrap';
 
-  DropdownMenu, DropdownToggle, UncontrolledDropdown
-} from "reactstrap";
-import { MenuIcon, MobileMenuIcon } from "../../components/svg";
+import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import IntlMessages from '../../helpers/IntlMessages';
 import {
-  isDarkSwitchActive, localeOptions, menuHiddenBreakpoint,
-  searchPath
-} from "../../constants/defaultValues";
-import { getDirection, setDirection } from "../../helpers/Utils";
+  setContainerClassnames,
+  clickOnMobileMenu,
+  logoutUser,
+  changeLocale,
+} from '../../redux/actions';
+
 import {
-  changeLocale, clickOnMobileMenu,
-  logoutUser, setContainerClassnames
-} from "../../redux/actions";
-import TopnavDarkSwitch from "./Topnav.DarkSwitch";
+  menuHiddenBreakpoint,
+  searchPath,
+  localeOptions,
+  isDarkSwitchActive,
+  buyUrl,
+  adminRoot,
+} from '../../constants/defaultValues';
 
+import { MobileMenuIcon, MenuIcon } from '../../components/svg';
+import TopnavEasyAccess from './Topnav.EasyAccess';
+import TopnavNotifications from './Topnav.Notifications';
+import TopnavDarkSwitch from './Topnav.DarkSwitch';
 
+import { getDirection, setDirection } from '../../helpers/Utils';
 
+const TopNav = ({
+  intl,
+  history,
+  containerClassnames,
+  menuClickCount,
+  selectedMenuHasSubItems,
+  locale,
+  setContainerClassnamesAction,
+  clickOnMobileMenuAction,
+  logoutUserAction,
+  changeLocaleAction,
+}) => {
+  const [isInFullScreen, setIsInFullScreen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
+  const search = () => {
+    history.push(`${searchPath}?key=${searchKeyword}`);
+    setSearchKeyword('');
+  };
 
-
-class TopNav extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isInFullScreen: false,
-      searchKeyword: "",
-    };
-  }
-
-  handleChangeLocale = (locale, direction) => {
-    this.props.changeLocale(locale);
+  const handleChangeLocale = (_locale, direction) => {
+    changeLocaleAction(_locale);
 
     const currentDirection = getDirection().direction;
     if (direction !== currentDirection) {
@@ -45,7 +70,8 @@ class TopNav extends Component {
       }, 500);
     }
   };
-  isInFullScreen = () => {
+
+  const isInFullScreenFn = () => {
     return (
       (document.fullscreenElement && document.fullscreenElement !== null) ||
       (document.webkitFullscreenElement &&
@@ -55,90 +81,81 @@ class TopNav extends Component {
       (document.msFullscreenElement && document.msFullscreenElement !== null)
     );
   };
-  handleSearchIconClick = (e) => {
+
+  const handleSearchIconClick = (e) => {
     if (window.innerWidth < menuHiddenBreakpoint) {
       let elem = e.target;
-      if (!e.target.classList.contains("search")) {
-        if (e.target.parentElement.classList.contains("search")) {
+      if (!e.target.classList.contains('search')) {
+        if (e.target.parentElement.classList.contains('search')) {
           elem = e.target.parentElement;
         } else if (
-          e.target.parentElement.parentElement.classList.contains("search")
+          e.target.parentElement.parentElement.classList.contains('search')
         ) {
           elem = e.target.parentElement.parentElement;
         }
       }
 
-      if (elem.classList.contains("mobile-view")) {
-        this.search();
-        elem.classList.remove("mobile-view");
-        this.removeEventsSearch();
+      if (elem.classList.contains('mobile-view')) {
+        search();
+        elem.classList.remove('mobile-view');
+        removeEventsSearch();
       } else {
-        elem.classList.add("mobile-view");
-        this.addEventsSearch();
+        elem.classList.add('mobile-view');
+        addEventsSearch();
       }
     } else {
-      this.search();
+      search();
     }
-  };
-  addEventsSearch = () => {
-    document.addEventListener("click", this.handleDocumentClickSearch, true);
-  };
-  removeEventsSearch = () => {
-    document.removeEventListener("click", this.handleDocumentClickSearch, true);
+    e.stopPropagation();
   };
 
-  handleDocumentClickSearch = (e) => {
+  const handleDocumentClickSearch = (e) => {
     let isSearchClick = false;
     if (
       e.target &&
       e.target.classList &&
-      (e.target.classList.contains("navbar") ||
-        e.target.classList.contains("simple-icon-magnifier"))
+      (e.target.classList.contains('navbar') ||
+        e.target.classList.contains('simple-icon-magnifier'))
     ) {
       isSearchClick = true;
-      if (e.target.classList.contains("simple-icon-magnifier")) {
-        this.search();
+      if (e.target.classList.contains('simple-icon-magnifier')) {
+        search();
       }
     } else if (
       e.target.parentElement &&
       e.target.parentElement.classList &&
-      e.target.parentElement.classList.contains("search")
+      e.target.parentElement.classList.contains('search')
     ) {
       isSearchClick = true;
     }
 
     if (!isSearchClick) {
-      const input = document.querySelector(".mobile-view");
-      if (input && input.classList) input.classList.remove("mobile-view");
-      this.removeEventsSearch();
-      this.setState({
-        searchKeyword: "",
-      });
-    }
-  };
-  handleSearchInputChange = (e) => {
-    this.setState({
-      searchKeyword: e.target.value,
-    });
-  };
-  handleSearchInputKeyPress = (e) => {
-    if (e.key === "Enter") {
-      this.search();
+      const input = document.querySelector('.mobile-view');
+      if (input && input.classList) input.classList.remove('mobile-view');
+      removeEventsSearch();
+      setSearchKeyword('');
     }
   };
 
-  search = () => {
-    this.props.history.push(searchPath + "/" + this.state.searchKeyword);
-    this.setState({
-      searchKeyword: "",
-    });
+  const removeEventsSearch = () => {
+    document.removeEventListener('click', handleDocumentClickSearch, true);
   };
 
-  toggleFullScreen = () => {
-    const isInFullScreen = this.isInFullScreen();
+  const addEventsSearch = () => {
+    document.addEventListener('click', handleDocumentClickSearch, true);
+  };
 
-    var docElm = document.documentElement;
-    if (!isInFullScreen) {
+  const handleSearchInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      search();
+    }
+  };
+
+  const toggleFullScreen = () => {
+    const isFS = isInFullScreenFn();
+
+    const docElm = document.documentElement;
+    if (!isFS) {
       if (docElm.requestFullscreen) {
         docElm.requestFullscreen();
       } else if (docElm.mozRequestFullScreen) {
@@ -148,171 +165,163 @@ class TopNav extends Component {
       } else if (docElm.msRequestFullscreen) {
         docElm.msRequestFullscreen();
       }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
     }
-    this.setState({
-      isInFullScreen: !isInFullScreen,
-    });
+    setIsInFullScreen(!isFS);
   };
 
-  handleLogout = () => {
-    this.props.logoutUser(this.props.history);
+  const handleLogout = () => {
+    logoutUserAction(history);
   };
 
-  menuButtonClick = (e, menuClickCount, containerClassnames) => {
+  const menuButtonClick = (e, _clickCount, _conClassnames) => {
     e.preventDefault();
 
     setTimeout(() => {
-      var event = document.createEvent("HTMLEvents");
-      event.initEvent("resize", false, false);
+      const event = document.createEvent('HTMLEvents');
+      event.initEvent('resize', false, false);
       window.dispatchEvent(event);
     }, 350);
-    this.props.setContainerClassnames(
-      ++menuClickCount,
-      containerClassnames,
-      this.props.selectedMenuHasSubItems
+    setContainerClassnamesAction(
+      _clickCount + 1,
+      _conClassnames,
+      selectedMenuHasSubItems
     );
   };
-  mobileMenuButtonClick = (e, containerClassnames) => {
+
+  const mobileMenuButtonClick = (e, _containerClassnames) => {
     e.preventDefault();
-    this.props.clickOnMobileMenu(containerClassnames);
+    clickOnMobileMenuAction(_containerClassnames);
   };
 
-  render() {
-    const { containerClassnames, menuClickCount, locale } = this.props;
-    // const { messages } = this.props.intl;
-    return (
-      <nav className="navbar fixed-top">
-        <div className="d-flex align-items-center navbar-left">
-          <NavLink
-            to="#"
-            className="menu-button d-none d-md-block"
-            onClick={(e) =>
-              this.menuButtonClick(e, menuClickCount, containerClassnames)
-            }
-          >
-            <MenuIcon />
-          </NavLink>
-          <NavLink
-            to="#"
-            className="menu-button-mobile d-xs-block d-sm-block d-md-none"
-            onClick={(e) => this.mobileMenuButtonClick(e, containerClassnames)}
-          >
-            <MobileMenuIcon />
-          </NavLink>
+  const { messages } = intl;
+  return (
+    <nav className="navbar fixed-top">
+      <div className="d-flex align-items-center navbar-left">
+        <NavLink
+          to="#"
+          location={{}}
+          className="menu-button d-none d-md-block"
+          onClick={(e) =>
+            menuButtonClick(e, menuClickCount, containerClassnames)
+          }
+        >
+          <MenuIcon />
+        </NavLink>
+        <NavLink
+          to="#"
+          location={{}}
+          className="menu-button-mobile d-xs-block d-sm-block d-md-none"
+          onClick={(e) => mobileMenuButtonClick(e, containerClassnames)}
+        >
+          <MobileMenuIcon />
+        </NavLink>
 
-          {/* <div className="search" data-search-path="/app/pages/search">
-            <Input
-              name="searchKeyword"
-              id="searchKeyword"
-              placeholder={messages["menu.search"]}
-              value={this.state.searchKeyword}
-              onChange={e => this.handleSearchInputChange(e)}
-              onKeyPress={e => this.handleSearchInputKeyPress(e)}
-            />
-            <span
-              className="search-icon"
-              onClick={e => this.handleSearchIconClick(e)}
-            >
-              <i className="simple-icon-magnifier" />
-            </span>
-          </div> */}
-
-          <div className="d-inline-block">
-            <UncontrolledDropdown className="ml-2">
-              <DropdownToggle
-                caret
-                color="light"
-                size="sm"
-                className="language-button"
-              >
-                <span className="name">{locale.toUpperCase()}</span>
-              </DropdownToggle>
-              <DropdownMenu className="mt-3" right>
-                {localeOptions.map((l) => {
-                  return (
-                    <DropdownItem
-                      onClick={() => this.handleChangeLocale(l.id, l.direction)}
-                      key={l.id}
-                    >
-                      {l.name}
-                    </DropdownItem>
-                  );
-                })}
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </div>
-          {/* <div className="position-relative d-none d-none d-lg-inline-block">
-            <a
-              className="btn btn-outline-primary btn-sm ml-2"
-              target="_top"
-              href="https://themeforest.net/cart/configure_before_adding/22544383?license=regular&ref=ColoredStrategies&size=source"
-            >
-              <IntlMessages id="user.buy" />
-            </a>
-          </div> */}
+        <div className="search">
+          <Input
+            name="searchKeyword"
+            id="searchKeyword"
+            placeholder={messages['menu.search']}
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyPress={(e) => handleSearchInputKeyPress(e)}
+          />
+          <span
+            className="search-icon"
+            onClick={(e) => handleSearchIconClick(e)}
+          >
+            <i className="simple-icon-magnifier" />
+          </span>
         </div>
-        {/* <a className="navbar-logo" href="/">
-          <span className="logo d-none d-xs-block" />
-          <span className="logo-mobile d-block d-xs-none" />
-        </a> */}
-        <span className="navbar-center">
-          Live as if you were to die tomorrow. Learn as if you were to live
-          forever.
-        </span>
 
-        <div className="navbar-right">
-          {isDarkSwitchActive && <TopnavDarkSwitch />}
-          <div className="header-icons d-inline-block align-middle">
-            <button
-              className="header-icon btn btn-empty d-none d-sm-inline-block"
-              type="button"
-              id="fullScreenButton"
-              onClick={this.toggleFullScreen}
+        <div className="d-inline-block">
+          <UncontrolledDropdown className="ml-2">
+            <DropdownToggle
+              caret
+              color="light"
+              size="sm"
+              className="language-button"
             >
-              {this.state.isInFullScreen ? (
-                <i className="simple-icon-size-actual d-block" />
-              ) : (
-                <i className="simple-icon-size-fullscreen d-block" />
-              )}
-            </button>
-          </div>
-
-          <div className="user d-inline-block">
-            <UncontrolledDropdown className="dropdown-menu-right">
-              <DropdownToggle className="p-0" color="empty">
-                <span className="name mr-1">{this.props.accountName}</span>
-                <span>
-                  <img alt="Profile" src={this.props.imgURL} />
-                </span>
-              </DropdownToggle>
-              <DropdownMenu className="mt-3" right>
-                {this.props.dropDownitems.map((item, index) => (
-                  <DropdownItem key={index} onClick={item.action}>
-                    {item.name}
+              <span className="name">{locale.toUpperCase()}</span>
+            </DropdownToggle>
+            <DropdownMenu className="mt-3" right>
+              {localeOptions.map((l) => {
+                return (
+                  <DropdownItem
+                    onClick={() => handleChangeLocale(l.id, l.direction)}
+                    key={l.id}
+                  >
+                    {l.name}
                   </DropdownItem>
-                ))}
-                <DropdownItem divider />
-                <DropdownItem onClick={() => this.handleLogout()}>
-                  Sign out
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </div>
+                );
+              })}
+            </DropdownMenu>
+          </UncontrolledDropdown>
         </div>
-      </nav>
-    );
-  }
-}
+        <div className="position-relative d-none d-none d-lg-inline-block">
+          <a
+            className="btn btn-outline-primary btn-sm ml-2"
+            target="_top"
+            href={buyUrl}
+          >
+            <IntlMessages id="user.buy" />
+          </a>
+        </div>
+      </div>
+      <NavLink className="navbar-logo" to={adminRoot}>
+        <span className="logo d-none d-xs-block" />
+        <span className="logo-mobile d-block d-xs-none" />
+      </NavLink>
+
+      <div className="navbar-right">
+        {isDarkSwitchActive && <TopnavDarkSwitch />}
+        <div className="header-icons d-inline-block align-middle">
+          <TopnavEasyAccess />
+          <TopnavNotifications />
+          <button
+            className="header-icon btn btn-empty d-none d-sm-inline-block"
+            type="button"
+            id="fullScreenButton"
+            onClick={toggleFullScreen}
+          >
+            {isInFullScreen ? (
+              <i className="simple-icon-size-actual d-block" />
+            ) : (
+              <i className="simple-icon-size-fullscreen d-block" />
+            )}
+          </button>
+        </div>
+        <div className="user d-inline-block">
+          <UncontrolledDropdown className="dropdown-menu-right">
+            <DropdownToggle className="p-0" color="empty">
+              <span className="name mr-1">Sarah Kortney</span>
+              <span>
+                <img alt="Profile" src="/assets/img/profiles/l-1.jpg" />
+              </span>
+            </DropdownToggle>
+            <DropdownMenu className="mt-3" right>
+              <DropdownItem>Account</DropdownItem>
+              <DropdownItem>Features</DropdownItem>
+              <DropdownItem>History</DropdownItem>
+              <DropdownItem>Support</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem onClick={() => handleLogout()}>
+                Sign out
+              </DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 const mapStateToProps = ({ menu, settings }) => {
   const { containerClassnames, menuClickCount, selectedMenuHasSubItems } = menu;
@@ -326,9 +335,9 @@ const mapStateToProps = ({ menu, settings }) => {
 };
 export default injectIntl(
   connect(mapStateToProps, {
-    setContainerClassnames,
-    clickOnMobileMenu,
-    logoutUser,
-    changeLocale,
+    setContainerClassnamesAction: setContainerClassnames,
+    clickOnMobileMenuAction: clickOnMobileMenu,
+    logoutUserAction: logoutUser,
+    changeLocaleAction: changeLocale,
   })(TopNav)
 );

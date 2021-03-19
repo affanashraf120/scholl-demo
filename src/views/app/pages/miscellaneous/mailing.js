@@ -1,31 +1,34 @@
-import React, { Component, Fragment } from "react";
-import { Row, Card, CardBody } from "reactstrap";
-import Breadcrumb from "../../../../containers/navs/Breadcrumb";
-import { Separator, Colxx } from "../../../../components/common/CustomBootstrap";
-import IntlMessages from "../../../../helpers/IntlMessages";
+/* eslint-disable react/no-danger */
+import React from 'react';
+import { Row, Card, CardBody } from 'reactstrap';
+import Breadcrumb from '../../../../containers/navs/Breadcrumb';
+import {
+  Separator,
+  Colxx,
+} from '../../../../components/common/CustomBootstrap';
+import IntlMessages from '../../../../helpers/IntlMessages';
 
-class MailingPages extends Component {
-  render() {
-    return (
-      <Fragment>
-        <Row>
-          <Colxx xxs="12">
-            <Breadcrumb heading="menu.mailing" match={this.props.match} />
-            <Separator className="mb-5" />
-          </Colxx>
-        </Row>
-        <Row>
-          <Colxx xxs="12" className="mb-4">
-            <Card className="mb-5">
-              <CardBody>
-                <IntlMessages id="pages.mailing-info" />
-              </CardBody>
-            </Card>
+const Mailing = ({ match }) => {
+  return (
+    <>
+      <Row>
+        <Colxx xxs="12">
+          <Breadcrumb heading="menu.mailing" match={match} />
+          <Separator className="mb-5" />
+        </Colxx>
+      </Row>
+      <Row>
+        <Colxx xxs="12" className="mb-4">
+          <Card className="mb-5">
+            <CardBody>
+              <IntlMessages id="pages.mailing-info" />
+            </CardBody>
+          </Card>
 
-            <div
-              className="content"
-              dangerouslySetInnerHTML={{
-                __html: `
+          <div
+            className="content"
+            dangerouslySetInnerHTML={{
+              __html: `
                     <div leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" style="height:auto !important;width:100% !important; font-family: Helvetica,Arial,sans-serif !important; margin-bottom: 40px;">
                     <center>
                         <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" style="max-width:600px; background-color:#ffffff;border:1px solid #e4e2e2;border-collapse:separate !important; border-radius:4px;border-spacing:0;color:#242128; margin:0;padding:40px;"
@@ -315,7 +318,7 @@ class MailingPages extends Component {
                                                 <td style="padding-bottom: 30px;">
                                                     <a href="#">
                                                         <img style="max-width: 100%; object-fit: cover; border-radius: 3px; margin-bottom:5px;"
-                                                            src="https://dore-jquery.coloredstrategies.com/img/carousel-1.jpg" />
+                                                            src="https://gogo-react.coloredstrategies.com/img/carousels/1.jpg" />
                                                     </a>
                                                     <h4 style="font-size: 16px; line-height: 1; margin-bottom:5px; margin-top: 10px;"><a
                                                             href="#" style="text-decoration: none; color:#303030; font-weight:500;">Distinctively
@@ -337,7 +340,7 @@ class MailingPages extends Component {
                                                 <td style="padding-bottom: 30px;">
                                                     <a href="#">
                                                         <img style="max-width: 100%; object-fit: cover; border-radius: 3px; margin-bottom:5px;"
-                                                            src="https://dore-jquery.coloredstrategies.com/img/carousel-2.jpg" />
+                                                            src="https://gogo-react.coloredstrategies.com/img/carousels/2.jpg" />
                                                     </a>
                                                     <h4 style="font-size: 16px; line-height: 1; margin-bottom:5px; margin-top: 10px;"><a
                                                             href="#" style="text-decoration: none; color:#303030; font-weight:500;">Assertively
@@ -359,7 +362,7 @@ class MailingPages extends Component {
                                                 <td>
                                                     <a href="#">
                                                         <img style="max-width: 100%; object-fit: cover; border-radius: 3px; margin-bottom:5px;"
-                                                            src="https://dore-jquery.coloredstrategies.com/img/carousel-3.jpg" />
+                                                            src="https://gogo-react.coloredstrategies.com/img/carousels/3.jpg" />
                                                     </a>
                                                     <h4 style="font-size: 16px; line-height: 1; margin-bottom:5px; margin-top: 10px;"><a
                                                             href="#" style="text-decoration: none; color:#303030; font-weight:500;">Objectively
@@ -398,13 +401,12 @@ class MailingPages extends Component {
                         </table>
                     </center>
                 </div>
-                    `
-              }}
-            />
-          </Colxx>
-        </Row>
-      </Fragment>
-    );
-  }
-}
-export default MailingPages;
+                    `,
+            }}
+          />
+        </Colxx>
+      </Row>
+    </>
+  );
+};
+export default Mailing;

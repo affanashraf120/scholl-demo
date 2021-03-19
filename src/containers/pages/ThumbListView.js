@@ -1,18 +1,18 @@
-import React from "react";
-import { Card, CustomInput, Badge } from "reactstrap";
-import { NavLink } from "react-router-dom";
-import classnames from "classnames";
-import { ContextMenuTrigger } from "react-contextmenu";
-import { Colxx } from "../../components/common/CustomBootstrap";
+import React from 'react';
+import { Card, CustomInput, Badge } from 'reactstrap';
+import { NavLink } from 'react-router-dom';
+import classnames from 'classnames';
+import { ContextMenuTrigger } from 'react-contextmenu';
+import { Colxx } from '../../components/common/CustomBootstrap';
 
 const ThumbListView = ({ product, isSelect, collect, onCheckItem }) => {
   return (
     <Colxx xxs="12" key={product.id} className="mb-3">
       <ContextMenuTrigger id="menu_id" data={product.id} collect={collect}>
         <Card
-          onClick={event => onCheckItem(event, product.id)}
-          className={classnames("d-flex flex-row", {
-            active: isSelect
+          onClick={(event) => onCheckItem(event, product.id)}
+          className={classnames('d-flex flex-row', {
+            active: isSelect,
           })}
         >
           <NavLink to={`?p=${product.id}`} className="d-flex">
@@ -47,7 +47,7 @@ const ThumbListView = ({ product, isSelect, collect, onCheckItem }) => {
                 type="checkbox"
                 id={`check_${product.id}`}
                 checked={isSelect}
-                onChange={()=>{}}
+                onChange={() => {}}
                 label=""
               />
             </div>

@@ -1,24 +1,35 @@
-import React from 'react';
-import videojs from 'video.js'
-export default class VideoPlayer extends React.Component {
-  componentDidMount() {
-    this.player = videojs(this.videoNode, this.props, function onPlayerReady() {
-    });
-  }
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/media-has-caption */
+import React, { useRef, useEffect } from 'react';
+import videojs from 'video.js';
 
-  componentWillUnmount() {
-    if (this.player) {
-      this.player.dispose()
-    }
-  }
+const VideoPlayer = (props) => {
+  const playerRef = useRef();
 
-  render() {
-    return (
-      <div>    
-        <div data-vjs-player>
-          <video ref={ node => this.videoNode = node } poster={"/assets/img/detail-1.jpg"} className={this.props.className || ""}></video>
-        </div>
+  useEffect(() => {
+    const player = videojs(
+      playerRef.current,
+      props,
+      function onPlayerReady() {}
+    );
+    return () => {
+      player.dispose();
+    };
+  }, []);
+
+  const { className } = props;
+
+  return (
+    <div>
+      <div data-vjs-player>
+        <video
+          ref={playerRef}
+          poster="/assets/img/video/poster.jpg"
+          className={className || ''}
+        />
       </div>
-    )
-  }
-}
+    </div>
+  );
+};
+
+export default VideoPlayer;

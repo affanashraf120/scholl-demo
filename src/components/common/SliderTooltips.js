@@ -1,36 +1,28 @@
-import React, {Fragment} from "react";
-import Slider, { Range } from "rc-slider";
-import "rc-slider/assets/index.css";
+/* eslint-disable react/destructuring-assignment */
+import React from 'react';
+import Slider, { Range } from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
-const sliderHandle = props => {
-    const { value, dragging, index, offset, ...restProps } = props;
-    const positionStyle = {
-      position: "absolute",
-      left: `${offset}%`
-    };
-    return (
-      <Fragment key={index}>
-        <div className="rc-slider-tooltip" style={positionStyle}>
-          {"$"+value}
-        </div>
-        <Slider.Handle value={value} offset={offset} {...restProps} />
-      </Fragment>
-    );
+const sliderHandle = ({ value, dragging, index, offset, ...restProps }) => {
+  const positionStyle = {
+    position: 'absolute',
+    left: `${offset}%`,
   };
+  return (
+    <span key={index}>
+      <div className="rc-slider-tooltip" style={positionStyle}>
+        {`$${value}`}
+      </div>
+      <Slider.Handle value={value} offset={offset} {...restProps} />
+    </span>
+  );
+};
 
-export class SliderTooltip extends React.Component {
-  render() {
-      return (
-        <Slider  handle={this.props.handle || sliderHandle} {...this.props}/>
-      )
-  }
-}
+const SliderTooltip = (props) => {
+  return <Slider handle={props.handle || sliderHandle} {...props} />;
+};
 
-
-export class RangeTooltip extends React.Component {
-  render() {
-      return (
-        <Range handle={this.props.handle || sliderHandle} {...this.props}/>
-      )
-  }
-}
+const RangeTooltip = (props) => {
+  return <Range handle={props.handle || sliderHandle} {...props} />;
+};
+export { SliderTooltip, RangeTooltip };

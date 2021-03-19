@@ -64,72 +64,75 @@ const Components = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/alerts`} />
       <Route
         path={`${match.url}/alerts`}
-        render={props => <Alerts {...props} />}
+        render={(props) => <Alerts {...props} />}
       />
       <Route
         path={`${match.url}/badges`}
-        render={props => <Badges {...props} />}
+        render={(props) => <Badges {...props} />}
       />
       <Route
         path={`${match.url}/buttons`}
-        render={props => <Buttons {...props} />}
+        render={(props) => <Buttons {...props} />}
       />
       <Route
         path={`${match.url}/cards`}
-        render={props => <Cards {...props} />}
+        render={(props) => <Cards {...props} />}
       />
       <Route
         path={`${match.url}/carousel`}
-        render={props => <Carousel {...props} />}
+        render={(props) => <Carousel {...props} />}
       />
       <Route
         path={`${match.url}/charts`}
-        render={props => <Charts {...props} />}
+        render={(props) => <Charts {...props} />}
       />
       <Route
         path={`${match.url}/collapse`}
-        render={props => <Collapse {...props} />}
+        render={(props) => <Collapse {...props} />}
       />
       <Route
         path={`${match.url}/dropdowns`}
-        render={props => <Dropdowns {...props} />}
+        render={(props) => <Dropdowns {...props} />}
       />
       <Route
         path={`${match.url}/editors`}
-        render={props => <Editors {...props} />}
+        render={(props) => <Editors {...props} />}
       />
       <Route
         path={`${match.url}/icons`}
-        render={props => <Icons {...props} />}
+        render={(props) => <Icons {...props} />}
       />
       <Route
         path={`${match.url}/input-groups`}
-        render={props => <InputGroups {...props} />}
+        render={(props) => <InputGroups {...props} />}
       />
       <Route
         path={`${match.url}/jumbotron`}
-        render={props => <Jumbotron {...props} />}
+        render={(props) => <Jumbotron {...props} />}
       />
-      <Route path={`${match.url}/maps`} render={props => <Maps {...props} />} />
+      <Route
+        path={`${match.url}/maps`}
+        render={(props) => <Maps {...props} />}
+      />
       <Route
         path={`${match.url}/modal`}
-        render={props => <Modal {...props} />}
+        render={(props) => <Modal {...props} />}
       />
       <Route
         path={`${match.url}/navigation`}
-        render={props => <Navigation {...props} />}
+        render={(props) => <Navigation {...props} />}
       />
       <Route
         path={`${match.url}/popover-tooltip`}
-        render={props => <PopoverTooltip {...props} />}
+        render={(props) => <PopoverTooltip {...props} />}
       />
       <Route
         path={`${match.url}/sortable`}
-        render={props => <Sortable {...props} />}
+        render={(props) => <Sortable {...props} />}
       />
       <Route
         path={`${match.url}/tables`}
-        render={props => <Tables {...props} />}
+        render={(props) => <Tables {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

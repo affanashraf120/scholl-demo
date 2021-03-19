@@ -1,10 +1,13 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import { Card, CardBody, CardTitle } from "reactstrap";
+/* eslint-disable react/no-array-index-key */
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import { Card, CardBody, CardTitle } from 'reactstrap';
 
-import IntlMessages from "../../helpers/IntlMessages";
-import data from "../../data/tickets";
+import IntlMessages from '../../helpers/IntlMessages';
+import data from '../../data/tickets';
+import { adminRoot } from '../../constants/defaultValues';
+
 const Tickets = () => {
   return (
     <Card>
@@ -20,8 +23,9 @@ const Tickets = () => {
               return (
                 <div
                   key={index}
-                  className="d-flex flex-row mb-3 pb-3 border-bottom">
-                  <NavLink to="/app/pages/details">
+                  className="d-flex flex-row mb-3 pb-3 border-bottom"
+                >
+                  <NavLink to={`${adminRoot}/pages/product/details`}>
                     <img
                       src={ticket.thumb}
                       alt={ticket.title}
@@ -30,7 +34,7 @@ const Tickets = () => {
                   </NavLink>
 
                   <div className="pl-3 pr-2">
-                    <NavLink to="/app/pages/details">
+                    <NavLink to={`${adminRoot}/pages/product/details`}>
                       <p className="font-weight-medium mb-0 ">{ticket.title}</p>
                       <p className="text-muted mb-0 text-small">
                         {ticket.detail}

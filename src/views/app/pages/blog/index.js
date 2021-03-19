@@ -15,11 +15,11 @@ const PagesBlog = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/blog-list`} />
       <Route
         path={`${match.url}/blog-list`}
-        render={props => <BlogList {...props} />}
+        render={(props) => <BlogList {...props} />}
       />
       <Route
         path={`${match.url}/blog-detail`}
-        render={props => <BlogDetail {...props} />}
+        render={(props) => <BlogDetail {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

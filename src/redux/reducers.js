@@ -14,7 +14,7 @@ const reducers = combineReducers({
   todoApp,
   chatApp,
   surveyListApp,
-  surveyDetailApp
+  surveyDetailApp,
 });
 
 export default reducers;

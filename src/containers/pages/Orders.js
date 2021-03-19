@@ -1,8 +1,9 @@
-import React from "react";
-import { Row, Card, CardBody, Badge } from "reactstrap";
-import { Colxx } from "../../components/common/CustomBootstrap";
-import { NavLink } from "react-router-dom";
-import orders from "../../data/orders";
+/* eslint-disable react/no-array-index-key */
+import React from 'react';
+import { Row, Card, CardBody, Badge } from 'reactstrap';
+import { NavLink } from 'react-router-dom';
+import { Colxx } from '../../components/common/CustomBootstrap';
+import orders from '../../data/orders';
 
 const OrderItem = ({ name, address, date, status, statusColor }) => {
   return (
@@ -11,6 +12,7 @@ const OrderItem = ({ name, address, date, status, statusColor }) => {
         <CardBody className="align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
           <NavLink
             to="#"
+            location={{}}
             className="list-item-heading mb-1 truncate w-40 w-xs-100"
           >
             {name}

@@ -20,19 +20,19 @@ const Forms = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/components`} />
       <Route
         path={`${match.url}/components`}
-        render={props => <Components {...props} />}
+        render={(props) => <Components {...props} />}
       />
       <Route
         path={`${match.url}/layouts`}
-        render={props => <Layouts {...props} />}
+        render={(props) => <Layouts {...props} />}
       />
       <Route
         path={`${match.url}/validations`}
-        render={props => <Validations {...props} />}
+        render={(props) => <Validations {...props} />}
       />
       <Route
         path={`${match.url}/wizard`}
-        render={props => <Wizard {...props} />}
+        render={(props) => <Wizard {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

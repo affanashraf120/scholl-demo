@@ -1,11 +1,9 @@
-import appLocaleData from 'react-intl/locale-data/en';
 import enMessages from '../locales/en_US';
 
 const EnLangRtl = {
-    messages: {
-        ...enMessages
-    },
-    locale: 'en-US',
-    data: appLocaleData
+  messages: {
+    ...enMessages,
+  },
+  locale: 'en-US',
 };
 export default EnLangRtl;

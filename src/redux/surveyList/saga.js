@@ -1,19 +1,16 @@
-import { all, call, fork, put, takeEvery } from "redux-saga/effects";
-import { getDateWithFormat } from "../../helpers/Utils";
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { getDateWithFormat } from '../../helpers/Utils';
 
-import {
-  SURVEY_LIST_GET_LIST,
-  SURVEY_LIST_ADD_ITEM
-} from "../actions";
+import { SURVEY_LIST_GET_LIST, SURVEY_LIST_ADD_ITEM } from '../actions';
 
 import {
   getSurveyListSuccess,
   getSurveyListError,
   addSurveyItemSuccess,
-  addSurveyItemError
-} from "./actions";
+  addSurveyItemError,
+} from './actions';
 
-import surveyListData from "../../data/survey.list.json";
+import surveyListData from '../../data/survey.list.json';
 
 const getSurveyListRequest = async () => {
   return await new Promise((success, fail) => {
@@ -21,8 +18,8 @@ const getSurveyListRequest = async () => {
       success(surveyListData.data);
     }, 1000);
   })
-    .then(response => response)
-    .catch(error => error);
+    .then((response) => response)
+    .catch((error) => error);
 };
 
 function* getSurveyListItems() {
@@ -34,8 +31,8 @@ function* getSurveyListItems() {
   }
 }
 
-const addSurveyItemRequest = async item => {
-  let items = surveyListData.data;
+const addSurveyItemRequest = async (item) => {
+  const items = surveyListData.data;
   item.id = items.length + 1;
   item.createDate = getDateWithFormat();
   items.splice(0, 0, item);
@@ -44,8 +41,8 @@ const addSurveyItemRequest = async item => {
       success(items);
     }, 1000);
   })
-    .then(response => response)
-    .catch(error => error);
+    .then((response) => response)
+    .catch((error) => error);
 };
 
 function* addSurveyItem({ payload }) {

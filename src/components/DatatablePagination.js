@@ -1,174 +1,178 @@
-import React, { Component, Fragment } from "react";
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/no-array-index-key */
+import React, { useState, useEffect } from 'react';
 import {
-  Pagination, PaginationItem, PaginationLink,
-  UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem
-} from "reactstrap";
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  UncontrolledDropdown,
+  DropdownMenu,
+  DropdownToggle,
+  DropdownItem,
+} from 'reactstrap';
 
-export default class DataTablePagination extends Component {
-  constructor(props) {
-    super(props);
+const DataTablePagination = ({
+  page,
+  pages,
+  canPrevious,
+  canNext,
+  pageSizeOptions,
+  showPageSizeOptions,
+  showPageJump,
+  defaultPageSize,
+  onPageChange,
+  onPageSizeChange,
+  paginationMaxSize,
+}) => {
+  const [pageState, setPageState] = useState(page);
+  const [pageSize, setPageSize] = useState(defaultPageSize);
 
-    this.getSafePage = this.getSafePage.bind(this);
-    this.changePage = this.changePage.bind(this);
-    this.applyPage = this.applyPage.bind(this);
-    this.pageClick = this.pageClick.bind(this);
-    this.renderPages = this.renderPages.bind(this);
-    this.changePageSize = this.changePageSize.bind(this);
-    this.renderPageJump = this.renderPageJump.bind(this);
-
-    this.state = {
-      page: props.page,
-      pageSize: this.props.defaultPageSize
-    };
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    return {page: props.page};
-  }
-
-  getSafePage(page) {
-    if (Number.isNaN(page)) {
-      page = this.props.page;
+  useEffect(() => {
+    setPageState(page);
+  }, [page]);
+  const getSafePage = (_page) => {
+    let p = _page;
+    if (Number.isNaN(_page)) {
+      p = page;
     }
-    return Math.min(Math.max(page, 0), this.props.pages - 1);
-  }
+    return Math.min(Math.max(p, 0), pages - 1);
+  };
 
-  changePageSize(size) {
-    this.props.onPageSizeChange(size);
-    this.setState({ pageSize: size });
-  }
+  const changePageSize = (size) => {
+    onPageSizeChange(size);
+    setPageSize(size);
+  };
 
-  changePage(page) {
-    page = this.getSafePage(page);
-    this.setState({ page });
-    if (this.props.page !== page) {
-      this.props.onPageChange(page);
+  const changePage = (_page) => {
+    const p = getSafePage(_page);
+
+    if (p !== pageState) {
+      setPageState(p);
+      onPageChange(p);
     }
-  }
+  };
 
-  applyPage(e) {
-    if (e) {
-      e.preventDefault();
+  const pageClick = (pageIndex) => {
+    changePage(pageIndex);
+  };
+
+  const renderPages = () => {
+    const totalPages = pages;
+    let endPage = pages;
+    const currentPage = pageState;
+    let startPage = 0;
+    const maxSize = paginationMaxSize;
+
+    if (maxSize) {
+      if (endPage > maxSize) {
+        startPage = Math.max(currentPage + 1 - Math.floor(maxSize / 2), 1);
+        endPage = startPage + maxSize - 1;
+        if (endPage > totalPages) {
+          endPage = totalPages;
+          startPage = endPage - maxSize + 1;
+        }
+        startPage -= 1;
+      }
     }
-    const page = this.state.page;
-    this.changePage(page === "" ? this.props.page : page);
-  }
 
-  pageClick(pageIndex) {
-    this.changePage(pageIndex);
-  }
-
-  renderPages() {
-    let pageCount = this.props.pages;
-    let pageButtons = [];
-    for (let i = 0; i < pageCount; i++) {
-      let active = this.state.page === i ? true : false;
+    const pageButtons = [];
+    for (let i = startPage; i < endPage; i += 1) {
+      const active = currentPage === i;
       pageButtons.push(
         <PaginationItem key={i} active={active}>
-          <PaginationLink
-            onClick={() => this.pageClick(i)}
-          >{i + 1}</PaginationLink>
+          <PaginationLink onClick={() => pageClick(i)}>{i + 1}</PaginationLink>
         </PaginationItem>
       );
     }
     return pageButtons;
-  }
+  };
 
-  renderPageJump() {
-    let pages = this.props.pages;
-    let pageNumbers = [];
-    for (let i = 0; i < pages; i++) {
+  const renderPageJump = () => {
+    const pageNumbers = [];
+    for (let i = 0; i < pages; i += 1) {
       pageNumbers.push(
-        <DropdownItem
-          key={i}
-          onClick={() => this.changePage(i)}
-        >
+        <DropdownItem key={i} onClick={() => changePage(i)}>
           {i + 1}
         </DropdownItem>
       );
     }
     return pageNumbers;
-  }
+  };
 
-  render() {
-    const {
-      page,
-      pages,
-      canPrevious,
-      canNext,
-      pageSizeOptions,
-      showPageSizeOptions,
-      showPageJump
-    } = this.props;
+  return (
+    <>
+      <div className="text-center">
+        {showPageJump && (
+          <div className="float-left pt-2">
+            <span>Page </span>
+            <UncontrolledDropdown className="d-inline-block">
+              <DropdownToggle caret color="outline-primary" size="xs">
+                {pageState + 1}
+              </DropdownToggle>
+              <DropdownMenu direction="left">{renderPageJump()}</DropdownMenu>
+            </UncontrolledDropdown>
+            <span> of </span>
+            {pages}
+          </div>
+        )}
 
-    return (
-      <Fragment>
-        <div className="text-center">
-          {
-            showPageJump &&
-            <div className="float-left pt-2"><span>Page </span>
-              <UncontrolledDropdown className="d-inline-block">
-                <DropdownToggle caret color="outline-primary" size="xs">
-                  {this.state.page + 1}
-                </DropdownToggle>
-                <DropdownMenu direction="left" >
-                  {this.renderPageJump()}
-                </DropdownMenu>
-              </UncontrolledDropdown>
-              <span> of </span>{pages}</div>
-          }
+        <Pagination
+          className="d-inline-block"
+          size="sm"
+          listClassName="justify-content-center"
+          aria-label="Page navigation example"
+        >
+          <PaginationItem className={`${!canPrevious && 'disabled'}`}>
+            <PaginationLink
+              className="prev"
+              onClick={() => {
+                if (!canPrevious) return;
+                changePage(page - 1);
+              }}
+              disabled={!canPrevious}
+            >
+              <i className="simple-icon-arrow-left" />
+            </PaginationLink>
+          </PaginationItem>
 
-          <Pagination className="d-inline-block" size="sm" listClassName="justify-content-center" aria-label="Page navigation example">
-            <PaginationItem className={`${!canPrevious && "disabled"}`}>
-              <PaginationLink
-                className={"prev"}
-                onClick={() => {
-                  if (!canPrevious) return;
-                  this.changePage(page - 1);
-                }}
-                disabled={!canPrevious}>
-                <i className="simple-icon-arrow-left" />
-              </PaginationLink>
-            </PaginationItem>
-
-            {this.renderPages()}
-            <PaginationItem className={`${!canNext && "disabled"}`}>
-              <PaginationLink
-                className="next"
-                onClick={() => {
-                  if (!canNext) return;
-                  this.changePage(page + 1);
-                }}
-                disabled={!canNext}>
-                <i className="simple-icon-arrow-right" />
-              </PaginationLink>
-            </PaginationItem>
-          </Pagination>
-          {
-            showPageSizeOptions &&
-            <div className="float-right pt-2">
-              <span className="text-muted text-small mr-1">Items </span>
-              <UncontrolledDropdown className="d-inline-block">
-                <DropdownToggle caret color="outline-primary" size="xs">
-                  {this.state.pageSize}
-                </DropdownToggle>
-                <DropdownMenu right>
-                  {pageSizeOptions.map((size, index) => {
-                    return (
-                      <DropdownItem
-                        key={index}
-                        onClick={() => this.changePageSize(size)}
-                      >
-                        {size}
-                      </DropdownItem>
-                    );
-                  })}
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </div>
-          }
-        </div>
-      </Fragment>
-    );
-  }
-}
+          {renderPages()}
+          <PaginationItem className={`${!canNext && 'disabled'}`}>
+            <PaginationLink
+              className="next"
+              onClick={() => {
+                if (!canNext) return;
+                changePage(page + 1);
+              }}
+              disabled={!canNext}
+            >
+              <i className="simple-icon-arrow-right" />
+            </PaginationLink>
+          </PaginationItem>
+        </Pagination>
+        {showPageSizeOptions && (
+          <div className="float-right pt-2">
+            <span className="text-muted text-small mr-1">Items </span>
+            <UncontrolledDropdown className="d-inline-block">
+              <DropdownToggle caret color="outline-primary" size="xs">
+                {pageSize}
+              </DropdownToggle>
+              <DropdownMenu right>
+                {pageSizeOptions.map((size, index) => {
+                  return (
+                    <DropdownItem
+                      key={index}
+                      onClick={() => changePageSize(size)}
+                    >
+                      {size}
+                    </DropdownItem>
+                  );
+                })}
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+export default DataTablePagination;

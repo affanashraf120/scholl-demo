@@ -26,26 +26,26 @@ const PagesMiscellaneous = ({ match }) => (
   <Suspense fallback={<div className="loading" />}>
     <Switch>
       <Redirect exact from={`${match.url}/`} to={`${match.url}/faq`} />
-      <Route path={`${match.url}/faq`} render={props => <Faq {...props} />} />
+      <Route path={`${match.url}/faq`} render={(props) => <Faq {...props} />} />
       <Route
         path={`${match.url}/invoice`}
-        render={props => <Invoice {...props} />}
+        render={(props) => <Invoice {...props} />}
       />
       <Route
         path={`${match.url}/knowledge-base`}
-        render={props => <KnowledgeBase {...props} />}
+        render={(props) => <KnowledgeBase {...props} />}
       />
       <Route
         path={`${match.url}/mailing`}
-        render={props => <Mailing {...props} />}
+        render={(props) => <Mailing {...props} />}
       />
       <Route
         path={`${match.url}/prices`}
-        render={props => <Prices {...props} />}
+        render={(props) => <Prices {...props} />}
       />
       <Route
         path={`${match.url}/search`}
-        render={props => <Search {...props} />}
+        render={(props) => <Search {...props} />}
       />
       <Redirect to="/error" />
     </Switch>

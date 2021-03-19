@@ -1,12 +1,12 @@
-import React from "react";
-import classnames from "classnames";
-const ThumbnailLetters = (props) => {
-  const { text, color, className, rounded, small } = props;
-  let letters = "";
-  if (text.indexOf(" ") > -1) {
-    text.split(" ").map(word => {
+import React from 'react';
+import classnames from 'classnames';
+
+const ThumbnailLetters = ({ text, color, className, rounded, small }) => {
+  let letters = '';
+  if (text.indexOf(' ') > -1) {
+    text.split(' ').map((word) => {
       if (word.length > 1) letters += word.slice(0, 1);
-      return "";
+      return '';
     });
   } else {
     letters += text.slice(0, 2);
@@ -19,10 +19,10 @@ const ThumbnailLetters = (props) => {
   return (
     <div
       className={`align-self-center list-thumbnail-letters ${
-        color ? "btn-" + color : ""
+        color ? `btn-${color}` : ''
       }  ${className}  ${classnames({
-        "rounded-circle": rounded,
-        small: small
+        'rounded-circle': rounded,
+        small,
       })}`}
       title={text}
     >
@@ -31,4 +31,4 @@ const ThumbnailLetters = (props) => {
   );
 };
 
-export default ThumbnailLetters;
+export default React.memo(ThumbnailLetters);

@@ -1,329 +1,331 @@
-import React from "react";
-import Select from "react-select";
-import { CustomInput } from "reactstrap";
+/* eslint-disable no-unused-vars */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable max-classes-per-file */
+import React from 'react';
+import Select from 'react-select';
+import { CustomInput } from 'reactstrap';
 
-import TagsInput from "react-tagsinput";
-import "react-tagsinput/react-tagsinput.css";
-import Switch from "rc-switch";
-import "rc-switch/assets/index.css";
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
+import Switch from 'rc-switch';
+import 'rc-switch/assets/index.css';
 
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-export class FormikReactSelect extends React.Component {
-  handleChange = value => {
-    this.props.onChange(this.props.name, value);
+const FormikReactSelect = ({
+  name,
+  value,
+  options,
+  isMulti,
+  className,
+  onChange,
+  onBlur,
+}) => {
+  const handleChange = (val) => {
+    onChange(name, val);
   };
-  handleBlur = () => {
-    this.props.onBlur(this.props.name, true);
-  };
-  render() {
-    return (
-      <Select
-        className={`react-select ${this.props.className}`}
-        classNamePrefix="react-select"
-        options={this.props.options}
-        isMulti={this.props.isMulti}
-        onChange={this.handleChange}
-        onBlur={this.handleBlur}
-        value={this.props.value}
-      />
-    );
-  }
-}
 
-export class FormikCheckboxGroup extends React.Component {
-  handleChange = val => {
-    let valueArray = [...this.props.value] || [];
+  const handleBlur = () => {
+    onBlur(name, true);
+  };
+
+  return (
+    <Select
+      className={`react-select ${className}`}
+      classNamePrefix="react-select"
+      options={options}
+      isMulti={isMulti}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      value={value}
+    />
+  );
+};
+
+const FormikCheckboxGroup = ({
+  name,
+  value,
+  options,
+  inline = false,
+  onChange,
+  onBlur,
+}) => {
+  const handleChange = (val) => {
+    const valueArray = [...value] || [];
     if (!valueArray.includes(val)) {
       valueArray.push(val);
     } else {
       valueArray.splice(valueArray.indexOf(val), 1);
     }
-    this.props.onChange(this.props.name, valueArray);
+    onChange(name, valueArray);
   };
 
-  handleBlur = () => {
-    this.props.onBlur(this.props.name, true);
+  const handleBlur = () => {
+    onBlur(name, true);
   };
 
-  render() {
-    const {
-      name,
-      value,
-      options,
-      inline = false
-    } = this.props;
-    return (
-      <React.Fragment>
-        {options.map((child, index) => {
-          return (
-            <div
-              key={`${name}_${child.value}_${index}`}
-              className={`position-relative form-check ${
-                inline ? "form-check-inline" : ""
-                }`}
-            >
-              <input
-                id={child.value}
-                name={name}
-                type="checkbox"
-                className="form-check-input"
-                onChange={() => this.handleChange(child.value)}
-                onBlur={this.handleBlur}
-                defaultChecked={value.includes(child.value)}
-                disabled={child.disabled}
-              />
-              <label className="form-check-label">
-                {child.label}
-              </label>
-            </div>
-          );
-        })}
-      </React.Fragment>
-    );
-  }
-}
-export class FormikCustomCheckboxGroup extends React.Component {
-  handleChange = val => {
-    let valueArray = [...this.props.value] || [];
-    if (!valueArray.includes(val)) {
-      valueArray.push(val);
-    } else {
-      valueArray.splice(valueArray.indexOf(val), 1);
-    }
-    this.props.onChange(this.props.name, valueArray);
-  };
-
-  handleBlur = () => {
-    this.props.onBlur(this.props.name, true);
-  };
-
-  render() {
-    const {
-      name,
-      value,
-      options,
-      inline = false
-    } = this.props;
-    return (
-      <React.Fragment>
-        {options.map((child, index) => {
-          return (
-            <CustomInput
-              key={`${name}_${child.value}_${index}`}
+  return (
+    <>
+      {options.map((child, index) => {
+        return (
+          <div
+            key={`${name}_${child.value}_${index}`}
+            className={`position-relative form-check ${
+              inline ? 'form-check-inline' : ''
+            }`}
+          >
+            <input
+              name={name}
               type="checkbox"
-              id={`${name}_${child.value}_${index}`}
-              name={child.name}
-              label={child.label}
-              onChange={() => this.handleChange(child.value)}
-              onBlur={this.handleBlur}
-              checked={value.includes(child.value)}
+              className="form-check-input"
+              onChange={() => handleChange(child.value)}
+              onBlur={handleBlur}
+              defaultChecked={value.includes(child.value)}
               disabled={child.disabled}
-              inline={inline}
             />
-          );
-        })}
-      </React.Fragment>
-    );
-  }
-}
-export const FormikCheckbox = props => {
-  const handleChange = event => {
-    props.onChange(props.name, !props.value);
+            <label className="form-check-label">{child.label}</label>
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+const FormikCustomCheckboxGroup = ({
+  name,
+  value,
+  options,
+  inline = false,
+  onChange,
+  onBlur,
+}) => {
+  const handleChange = (val) => {
+    const valueArray = [...value] || [];
+    if (!valueArray.includes(val)) {
+      valueArray.push(val);
+    } else {
+      valueArray.splice(valueArray.indexOf(val), 1);
+    }
+    onChange(name, valueArray);
+  };
+
+  const handleBlur = () => {
+    onBlur(name, true);
+  };
+
+  return (
+    <>
+      {options.map((child, index) => {
+        return (
+          <CustomInput
+            key={`${name}_${child.value}_${index}`}
+            id={`${name}_${child.value}_${index}`}
+            type="checkbox"
+            name={child.name}
+            label={child.label}
+            onChange={() => handleChange(child.value)}
+            onBlur={handleBlur}
+            checked={value.includes(child.value)}
+            disabled={child.disabled}
+            inline={inline}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+const FormikCheckbox = ({ name, value, disabled, label, onChange, onBlur }) => {
+  const handleChange = (_event) => {
+    onChange(name, !value);
   };
   const handleBlur = () => {
-    props.onBlur(props.name, true);
+    onBlur(name, true);
   };
   return (
-    <div
-      className={`position-relative form-check form-check-inline`}
-    >
+    <div className="position-relative form-check form-check-inline">
       <input
-        name={props.name}
+        name={name}
         type="checkbox"
         className="form-check-input"
         onChange={handleChange}
         onBlur={handleBlur}
-        checked={props.value}
-        disabled={props.disabled}
+        checked={value}
+        disabled={disabled}
       />
-      <label className="form-check-label">
-        {props.label}
-      </label>
+      <label className="form-check-label">{label}</label>
     </div>
   );
 };
 
-export const FormikCustomCheckbox = props => {
-  const handleChange = event => {
-    props.onChange(props.name, !props.value);
+const FormikCustomCheckbox = ({
+  name,
+  value,
+  disabled,
+  label,
+  onChange,
+  onBlur,
+}) => {
+  const handleChange = (_event) => {
+    onChange(name, !value);
   };
   const handleBlur = () => {
-    props.onBlur(props.name, true);
+    onBlur(name, true);
   };
   return (
     <CustomInput
       type="checkbox"
-      id={props.name}
-      name={props.name}
-      label={props.label}
+      id={name}
+      name={name}
+      label={label}
       onChange={handleChange}
       onBlur={handleBlur}
-      checked={props.value}
-      disabled={props.disabled}
+      checked={value}
+      disabled={disabled}
       inline
     />
   );
 };
 
-export class FormikRadioButtonGroup extends React.Component {
-  handleChange = val => {
-    this.props.onChange(this.props.name, val);
+const FormikRadioButtonGroup = ({
+  name,
+  value,
+  options,
+  inline = false,
+  onChange,
+  onBlur,
+}) => {
+  const handleChange = (val) => {
+    onChange(name, val);
   };
 
-  handleBlur = () => {
-    this.props.onBlur(this.props.name, true);
+  const handleBlur = () => {
+    onBlur(name, true);
   };
 
-  render() {
-    const {
-      name,
-      value,
-      options,
-      inline = false
-    } = this.props;
-    return (
-      <React.Fragment>
-        {options.map((child, index) => {
-          return (
-            <div
-              key={`${name}_${child.value}_${index}`}
-              className={`position-relative form-check ${
-                inline ? "form-check-inline" : ""
-                }`}
-            >
-              <input
-                id={child.value}
-                name={name}
-                type="radio"
-                className="form-check-input"
-                onChange={() => this.handleChange(child.value)}
-                onBlur={this.handleBlur}
-                defaultChecked={value === child.value}
-                disabled={child.disabled}
-              />
-              <label className="form-check-label">
-                {child.label}
-              </label>
-            </div>
-          );
-        })}
-      </React.Fragment>
-    );
-  }
-}
-
-export class FormikCustomRadioGroup extends React.Component {
-  handleChange = val => {
-    this.props.onChange(this.props.name, val);
-  };
-
-  handleBlur = () => {
-    this.props.onBlur(this.props.name, true);
-  };
-
-  render() {
-    const {
-      name,
-      value,
-      options,
-      inline = false
-    } = this.props;
-    return (
-      <React.Fragment>
-        {options.map((child, index) => {
-          return (
-            <CustomInput
-              key={`${name}_${child.value}_${index}`}
+  return (
+    <>
+      {options.map((child, index) => {
+        return (
+          <div
+            key={`${name}_${child.value}_${index}`}
+            className={`position-relative form-check ${
+              inline ? 'form-check-inline' : ''
+            }`}
+          >
+            <input
+              id={child.value}
+              name={name}
               type="radio"
-              id={`${name}_${child.value}_${index}`}
-              name={child.name}
-              label={child.label}
-              onChange={() => this.handleChange(child.value)}
-              onBlur={this.handleBlur}
-              checked={value === child.value}
+              className="form-check-input"
+              onChange={() => handleChange(child.value)}
+              onBlur={handleBlur}
+              defaultChecked={value === child.value}
               disabled={child.disabled}
-              inline={inline}
             />
-          );
-        })}
-      </React.Fragment>
-    );
-  }
-}
-export class FormikTagsInput extends React.Component {
+            <label className="form-check-label">{child.label}</label>
+          </div>
+        );
+      })}
+    </>
+  );
+};
 
-  handleChange = val => {
-    this.props.onBlur(this.props.name, true);
-    this.props.onChange(this.props.name, val);
+const FormikCustomRadioGroup = ({
+  name,
+  value,
+  options,
+  inline = false,
+  onChange,
+  onBlur,
+}) => {
+  const handleChange = (val) => {
+    onChange(name, val);
   };
 
-  render() {
-    const { name, value } = this.props;
-    return (
-      <TagsInput
-        id={name}
-        name={name}
-        value={value}
-        onChange={this.handleChange}
-      />
-    );
-  }
-}
-
-export class FormikSwitch extends React.Component {
-
-  handleChange = val => {
-    this.props.onBlur(this.props.name, true);
-    this.props.onChange(this.props.name, val);
+  const handleBlur = () => {
+    onBlur(name, true);
   };
 
-  render() {
-    const { name, value, className } = this.props;
-    return (
-      <Switch
-        id={name}
-        name={name}
-        className={className}
-        checked={value}
-        onChange={this.handleChange}
-      />
-    );
-  }
-}
+  return (
+    <>
+      {options.map((child, index) => {
+        return (
+          <CustomInput
+            key={`${name}_${child.value}_${index}`}
+            type="radio"
+            id={`${name}_${child.value}_${index}`}
+            name={child.name}
+            label={child.label}
+            onChange={() => handleChange(child.value)}
+            onBlur={handleBlur}
+            checked={value === child.value}
+            disabled={child.disabled}
+            inline={inline}
+          />
+        );
+      })}
+    </>
+  );
+};
 
-export class FormikDatePicker extends React.Component {
-
-
-  handleChange = val => {
-    this.props.onChange(this.props.name, val);
+const FormikTagsInput = ({ name, value, onChange, onBlur }) => {
+  const handleChange = (val) => {
+    onBlur(name, true);
+    onChange(name, val);
   };
-  handleBlur = val => {
-    this.props.onBlur(this.props.name, true);
+
+  return <TagsInput name={name} value={value} onChange={handleChange} />;
+};
+
+const FormikSwitch = ({ name, value, className, onChange, onBlur }) => {
+  const handleChange = (val) => {
+    onBlur(name, true);
+    onChange(name, val);
   };
 
-  render() {
-    const { name, value, className } = this.props;
-    return (
-      <DatePicker
-        id={name}
-        name={name}
-        className={className}
-        selected={value}
-        onChange={this.handleChange}
-        onBlur={this.handleBlur}
-      />
-    );
-  }
-}
+  return (
+    <Switch
+      name={name}
+      className={className}
+      checked={value}
+      onChange={handleChange}
+    />
+  );
+};
+
+const FormikDatePicker = ({ name, value, className, onChange, onBlur }) => {
+  const handleChange = (val) => {
+    onChange(name, val);
+  };
+
+  const handleBlur = (_val) => {
+    onBlur(name, true);
+  };
+
+  return (
+    <DatePicker
+      name={name}
+      className={className}
+      selected={value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+    />
+  );
+};
+
+export {
+  FormikReactSelect,
+  FormikCheckboxGroup,
+  FormikCustomCheckboxGroup,
+  FormikCheckbox,
+  FormikCustomCheckbox,
+  FormikRadioButtonGroup,
+  FormikCustomRadioGroup,
+  FormikTagsInput,
+  FormikSwitch,
+  FormikDatePicker,
+};

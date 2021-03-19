@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable consistent-return */
+import React, { useState } from 'react';
 import {
   Card,
   Button,
@@ -8,285 +9,276 @@ import {
   Form,
   Input,
   Badge,
-  CustomInput
-} from "reactstrap";
-import Select from "react-select";
-import Sortable from "react-sortablejs";
+  CustomInput,
+} from 'reactstrap';
+import Select from 'react-select';
+import { ReactSortable } from 'react-sortablejs';
 
-import CustomSelectInput from "../../components/common/CustomSelectInput";
-
-import { mapOrder } from "../../helpers/Utils";
+import CustomSelectInput from '../../components/common/CustomSelectInput';
 
 const answerTypes = [
-  { label: "Text Area", value: "1", id: 1 },
-  { label: "Checkbox", value: "2", id: 2 },
-  { label: "Radiobutton", value: "3", id: 3 }
+  { label: 'Text Area', value: '1', id: 1 },
+  { label: 'Checkbox', value: '2', id: 2 },
+  { label: 'Radiobutton', value: '3', id: 3 },
 ];
-export default class SurveyQuestionBuilder extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      collapse: this.props.expanded || false,
-      mode: "edit-quesiton",
-      id: this.props.id,
-      title: this.props.title || "",
-      question: this.props.question || "",
-      answerType: this.props.answerType
-        ? answerTypes.find(item => {
-            return item.id === this.props.answerType;
-          })
-        : null,
-      answers: this.props.answers || []
-    };
-  }
-  deleteClick = () => {
-    this.props.deleteClick(this.state.id);
+
+const SurveyQuestionBuilder = ({
+  expanded,
+  id,
+  title,
+  question,
+  answerType,
+  answers,
+  order,
+  deleteClick,
+}) => {
+  const [collapse, setCollapse] = useState(expanded || false);
+  const [mode, setMode] = useState('edit-quesiton');
+  const [qId] = useState(id);
+  const [qTitle, setQTitle] = useState(title);
+  const [qQuestion, setQQuestion] = useState(question || '');
+  const [qAnswerType, setQAnswerType] = useState(
+    answerType
+      ? answerTypes.find((item) => {
+          return item.id === answerType;
+        })
+      : null
+  );
+  const [qAnswers, setQAnswers] = useState(answers || []);
+
+  const editClick = () => {
+    setMode('edit-quesiton');
+    setCollapse(true);
   };
-  toggleClick = () => {
-    this.setState({ collapse: !this.state.collapse });
+
+  const viewClick = () => {
+    setMode('view-quesiton');
+    setCollapse(true);
   };
-  editClick = () => {
-    this.setState({ mode: "edit-quesiton" });
-    this.setState({ collapse: true });
-  };
-  viewClick = () => {
-    this.setState({ mode: "view-quesiton" });
-    this.setState({ collapse: true });
-  };
-  typeChange = answerType => {
-    if (this.state.answerType) {
-      if (
-        (this.state.answerType.id === 2 || this.state.answerType.id === 3) &&
-        answerType.id === 1
-      ) {
-        this.setState({ answers: [] });
+
+  const typeChange = (aType) => {
+    if (qAnswerType) {
+      if ((qAnswerType.id === 2 || qAnswerType.id === 3) && aType.id === 1) {
+        setQAnswers([]);
       }
     }
+    setQAnswerType(aType);
+  };
 
-    this.setState({ answerType });
+  const removeAnswer = (answerId) => {
+    setQAnswers(qAnswers.filter((item) => item.id !== answerId));
   };
-  removeAnswer = answerId => {
-    this.setState({
-      answers: this.state.answers.filter(item => item.id !== answerId)
-    });
-  };
-  addAnswer = () => {
-    var nextId = 0;
-    if (this.state.answers.length > 0) {
-      var orderedAnswers = this.state.answers.slice().sort((a, b) => {
+
+  const addAnswer = () => {
+    let nextId = 0;
+    if (qAnswers.length > 0) {
+      const orderedAnswers = qAnswers.slice().sort((a, b) => {
         return a.id < b.id;
       });
       nextId = orderedAnswers[0].id + 1;
     }
-    this.setState({
-      answers: [...this.state.answers, { id: nextId, label: "" }]
-    });
+    setQAnswers([...qAnswers, { id: nextId, label: '' }]);
   };
 
-  updateAnswer = (answerId, event) => {
-    var answerIndex = this.state.answers.findIndex(
-      item => item.id === answerId
-    );
-    var answers = this.state.answers;
-    answers[answerIndex]["label"] = event.target.value;
-    this.setState({
-      answers
-    });
+  const updateAnswer = (answerId, event) => {
+    const answerIndex = qAnswers.findIndex((item) => item.id === answerId);
+    const tempAnswers = [...qAnswers];
+    tempAnswers[answerIndex].label = event.target.value;
+    setQAnswers(tempAnswers);
   };
 
-  renderViewModeAnswers = () => {
-    if (!this.state.answerType) {
+  const renderViewModeAnswers = () => {
+    if (!qAnswerType) {
       return;
     }
-    switch (this.state.answerType.id) {
+    switch (qAnswerType.id) {
       case 1:
         return <Input type="text" />;
       case 2:
         return (
           <FormGroup>
-            {" "}
-            {this.state.answers.map(answer => {
+            {qAnswers.map((answer) => {
               return (
                 <CustomInput
                   key={answer.id}
                   type="checkbox"
-                  id={`checkbox${this.state.id}_${answer.id}`}
-                  name={`checkbox${this.state.id}`}
-                  label={answer.label}/>
+                  id={`checkbox${qId}_${answer.id}`}
+                  name={`checkbox${qId}`}
+                  label={answer.label}
+                />
               );
-            })}{" "}
+            })}
           </FormGroup>
         );
       case 3:
         return (
           <FormGroup>
-            {this.state.answers.map(answer => {
+            {qAnswers.map((answer) => {
               return (
                 <CustomInput
                   key={answer.id}
                   type="radio"
-                  name={`radio${this.state.id}`}
-                  id={`radio${this.state.id}_${answer.id}`}
-                  label={answer.label}/>
+                  name={`radio${qId}`}
+                  id={`radio${qId}_${answer.id}`}
+                  label={answer.label}
+                />
               );
             })}
           </FormGroup>
         );
       default:
         return (
-          <Input type="text" placeholder="" value={""} onChange={event => {}} />
+          <Input type="text" placeholder="" value="" onChange={() => {}} />
         );
     }
   };
 
-  render() {
-    return (
-      <Card className={`question d-flex mb-4 ${this.state.mode}`}>
-        <div className="d-flex flex-grow-1 min-width-zero">
-          <div className="card-body align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
-            <div className="list-item-heading mb-0 truncate w-80 mb-1 mt-1">
-              <span className="heading-number d-inline-block">
-                {this.props.order + 1}
-              </span>
-              {this.state.title}
-            </div>
-          </div>
-          <div className="custom-control custom-checkbox pl-1 align-self-center pr-4">
-            <Button
-              outline
-              color={"theme-3"}
-              className="icon-button ml-1 edit-button"
-              onClick={this.editClick} >
-              <i className="simple-icon-pencil" />
-            </Button>
-
-            <Button
-              outline
-              color={"theme-3"}
-              className="icon-button ml-1 view-button no-border"
-              onClick={this.viewClick} >
-              <i className="simple-icon-eye" />
-            </Button>
-
-            <Button
-              outline
-              color={"theme-3"}
-              className={`icon-button ml-1 rotate-icon-click ${
-                this.state.collapse ? "rotate" : ""
-              }`}
-              onClick={this.toggleClick}>
-              <i className="simple-icon-arrow-down" />
-            </Button>
-
-            <Button
-              outline
-              color={"theme-3"}
-              className="icon-button ml-1"
-              onClick={this.deleteClick}>
-              <i className="simple-icon-ban" />
-            </Button>
+  return (
+    <Card className={`question d-flex mb-4 ${mode}`}>
+      <div className="d-flex flex-grow-1 min-width-zero">
+        <div className="card-body align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
+          <div className="list-item-heading mb-0 truncate w-80 mb-1 mt-1">
+            <span className="heading-number d-inline-block">{order + 1}</span>
+            {qTitle}
           </div>
         </div>
+        <div className="custom-control custom-checkbox pl-1 align-self-center pr-4">
+          <Button
+            outline
+            color="theme-3"
+            className="icon-button ml-1 edit-button"
+            onClick={() => editClick()}
+          >
+            <i className="simple-icon-pencil" />
+          </Button>
 
-        <Collapse isOpen={this.state.collapse}>
-          <div className="card-body pt-0">
-            <div className="edit-mode">
-              <Form>
-                <FormGroup>
-                  <Label>Title</Label>
-                  <Input
-                    type="text"
-                    value={this.state.title}
-                    onChange={event => {
-                      this.setState({ title: event.target.value });
-                    }}/>
-                </FormGroup>
+          <Button
+            outline
+            color="theme-3"
+            className="icon-button ml-1 view-button no-border"
+            onClick={() => viewClick()}
+          >
+            <i className="simple-icon-eye" />
+          </Button>
 
-                <FormGroup>
-                  <Label>Question</Label>
-                  <Input
-                    type="text"
-                    value={this.state.question}
-                    onChange={event => {
-                      this.setState({ question: event.target.value });
-                    }}/>
-                </FormGroup>
-                <div className="separator mb-4 mt-4" />
+          <Button
+            outline
+            color="theme-3"
+            className={`icon-button ml-1 rotate-icon-click ${
+              collapse ? 'rotate' : ''
+            }`}
+            onClick={() => setCollapse(!collapse)}
+          >
+            <i className="simple-icon-arrow-down" />
+          </Button>
 
-                <FormGroup>
-                  <Label>Answer Type</Label>
-                  <Select
-                    components={{ Input: CustomSelectInput }}
-                    className="react-select"
-                    classNamePrefix="react-select"
-                    name="form-field-name"
-                    value={this.state.answerType}
-                    onChange={this.typeChange}
-                    options={answerTypes}/>
-                </FormGroup>
-                {this.state.answers.length > 0 && <Label>Answers</Label>}
+          <Button
+            outline
+            color="theme-3"
+            className="icon-button ml-1"
+            onClick={() => deleteClick(qId)}
+          >
+            <i className="simple-icon-ban" />
+          </Button>
+        </div>
+      </div>
 
-                <Sortable
-                  className="answers"
-                  options={{
-                    handle: ".handle"
-                  }}
-                  onChange={(order, sortable, evt) => {
-                    var answers = mapOrder(this.state.answers, order, "id");
-                    this.setState({ answers });
-                  }}>
-                  {this.state.answers.map(item => {
-                    return (
-                      <FormGroup
-                        data-id={item.id}
-                        key={item.id}
-                        className="mb-1">
-                        <Input
-                          type="text"
-                          value={item.label}
-                          autoFocus
-                          onChange={event => {
-                            this.updateAnswer(item.id, event);
-                          }}/>
-                        <div className="input-icons">
-                          <Badge className="handle" color="empty" pill>
-                            <i className="simple-icon-cursor-move" />
-                          </Badge>
-                          <Badge
-                            color="empty"
-                            pill
-                            onClick={() => this.removeAnswer(item.id)} >
-                            <i className="simple-icon-close" />
-                          </Badge>
-                        </div>
-                      </FormGroup>
-                    );
-                  })}
-                </Sortable>
-
-                <div className="text-center">
-                  {this.state.answerType && this.state.answerType.id !== 1 && (
-                    <Button
-                      outline
-                      color="primary"
-                      className="mt-3"
-                      onClick={() => this.addAnswer()}>
-                      <i className="simple-icon-plus btn-group-icon" /> Add
-                      Answer
-                    </Button>
-                  )}
-                </div>
-              </Form>
-            </div>
-            <div className="view-mode">
+      <Collapse isOpen={collapse}>
+        <div className="card-body pt-0">
+          <div className="edit-mode">
+            <Form>
               <FormGroup>
-                <Label>{this.state.question}</Label>
-                {this.renderViewModeAnswers()}
+                <Label>Title</Label>
+                <Input
+                  type="text"
+                  value={qTitle}
+                  onChange={(event) => setQTitle(event.target.value)}
+                />
               </FormGroup>
-            </div>
+
+              <FormGroup>
+                <Label>Question</Label>
+                <Input
+                  type="text"
+                  value={qQuestion}
+                  onChange={(event) => setQQuestion(event.target.value)}
+                />
+              </FormGroup>
+              <div className="separator mb-4 mt-4" />
+
+              <FormGroup>
+                <Label>Answer Type</Label>
+                <Select
+                  components={{ Input: CustomSelectInput }}
+                  className="react-select"
+                  classNamePrefix="react-select"
+                  name="form-field-name"
+                  value={qAnswerType}
+                  onChange={(t) => typeChange(t)}
+                  options={answerTypes}
+                />
+              </FormGroup>
+              {qAnswers.length > 0 && <Label>Answers</Label>}
+
+              <ReactSortable
+                list={qAnswers}
+                setList={(newState) => setQAnswers(newState)}
+                className="answers"
+                options={{
+                  handle: '.handle',
+                }}
+              >
+                {qAnswers.map((item) => {
+                  return (
+                    <FormGroup data-id={item.id} key={item.id} className="mb-1">
+                      <Input
+                        type="text"
+                        value={item.label}
+                        autoFocus
+                        onChange={(event) => {
+                          updateAnswer(item.id, event);
+                        }}
+                      />
+                      <div className="input-icons">
+                        <Badge className="handle" color="empty" pill>
+                          <i className="simple-icon-cursor-move" />
+                        </Badge>
+                        <Badge
+                          color="empty"
+                          pill
+                          onClick={() => removeAnswer(item.id)}
+                        >
+                          <i className="simple-icon-close" />
+                        </Badge>
+                      </div>
+                    </FormGroup>
+                  );
+                })}
+              </ReactSortable>
+
+              <div className="text-center">
+                {qAnswerType && qAnswerType.id !== 1 && (
+                  <Button
+                    outline
+                    color="primary"
+                    className="mt-3"
+                    onClick={() => addAnswer()}
+                  >
+                    <i className="simple-icon-plus btn-group-icon" /> Add Answer
+                  </Button>
+                )}
+              </div>
+            </Form>
           </div>
-        </Collapse>
-      </Card>
-    );
-  }
-}
+          <div className="view-mode">
+            <FormGroup>
+              <Label>{qQuestion}</Label>
+              {renderViewModeAnswers()}
+            </FormGroup>
+          </div>
+        </div>
+      </Collapse>
+    </Card>
+  );
+};
+export default SurveyQuestionBuilder;

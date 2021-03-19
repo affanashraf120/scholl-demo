@@ -1,10 +1,14 @@
-import React, { Component, Fragment } from "react";
-import { Row, Card, CardBody, CardTitle } from "reactstrap";
-import { Colxx, Separator } from "../../../../components/common/CustomBootstrap";
-import Breadcrumb from "../../../../containers/navs/Breadcrumb";
-import IntlMessages from "../../../../helpers/IntlMessages";
-import {items} from "../../../../data/carouselItems";
-import GlideComponent from "../../../../components/carousel/GlideComponent";
+/* eslint-disable react/no-array-index-key */
+import React from 'react';
+import { Row, Card, CardBody, CardTitle } from 'reactstrap';
+import {
+  Colxx,
+  Separator,
+} from '../../../../components/common/CustomBootstrap';
+import Breadcrumb from '../../../../containers/navs/Breadcrumb';
+import IntlMessages from '../../../../helpers/IntlMessages';
+import { items } from '../../../../data/carouselItems';
+import GlideComponent from '../../../../components/carousel/GlideComponent';
 
 const BasicCarouselItem = ({ title, img, detail, badges }) => {
   return (
@@ -19,11 +23,11 @@ const BasicCarouselItem = ({ title, img, detail, badges }) => {
                   key={index}
                   className={`badge badge-pill badge-${
                     b.color
-                    } position-absolute ${
+                  } position-absolute ${
                     index === 0
-                      ? "badge-top-left"
-                      : "badge-top-left-" + (index + 1)
-                    }`}
+                      ? 'badge-top-left'
+                      : `badge-top-left-${index + 1}`
+                  }`}
                 >
                   {b.title}
                 </span>
@@ -66,8 +70,9 @@ const SingleCarouselItem = ({ title, img, category, detail, badges }) => {
                   return (
                     <span
                       key={index}
-                      className={`badge badge-pill badge-${b.color} ${index <
-                        badges.length && "mr-1"}`}
+                      className={`badge badge-pill badge-${b.color} ${
+                        index < badges.length && 'mr-1'
+                      }`}
                     >
                       {b.title}
                     </span>
@@ -91,14 +96,14 @@ const NoControlCarouselItem = ({ title, img, detail, badges }) => {
             badges.map((b, index) => {
               return (
                 <span
-                  key={index}
+                  key={`badges_${index}`}
                   className={`badge badge-pill badge-${
                     b.color
-                    } position-absolute ${
+                  } position-absolute ${
                     index === 0
-                      ? "badge-top-left"
-                      : "badge-top-left-" + (index + 1)
-                    }`}
+                      ? 'badge-top-left'
+                      : `badge-top-left-${index + 1}`
+                  }`}
                 >
                   {b.title}
                 </span>
@@ -118,99 +123,99 @@ const NoControlCarouselItem = ({ title, img, detail, badges }) => {
   );
 };
 
-export default class CarouselUi extends Component {
-  render() {
-    return (
-      <Fragment>
-        <Row>
-          <Colxx xxs="12">
-            <Breadcrumb heading="menu.carousel" match={this.props.match} />
-            <Separator className="mb-5" />
-          </Colxx>
-        </Row>
-        <Row>
-          <Colxx xxs="12">
-            <CardTitle>
-              <IntlMessages id="carousel.basic" />
-            </CardTitle>
-          </Colxx>
-          <Colxx xxs="12" className="pl-0 pr-0 mb-5">
-            <GlideComponent settings={
-              {
-                gap: 5,
-                perView: 3,
-                type: "carousel",
-                breakpoints: {
-                  600: { perView: 1 },
-                  1400: { perView: 2 }
-                }
-              }
-            }>
-              {items.map(item => {
-                return (
-                  <div key={item.id}>
-                    <BasicCarouselItem {...item} />
-                  </div>
-                );
-              })}
-            </GlideComponent>
-          </Colxx>
-        </Row>
-        <Row>
-          <Colxx xxs="12">
-            <CardTitle>
-              <IntlMessages id="carousel.single" />
-            </CardTitle>
-          </Colxx>
-          <Colxx xxs="12" className="pl-0 pr-0 mb-5">
-            <GlideComponent settings={
-              {
-                gap: 5,
-                perView: 1,
-                type: "carousel"
-              }
-            }>
-              {items.map(item => {
-                return (
-                  <div key={item.id}>
-                    <SingleCarouselItem {...item} />
-                  </div>
-                );
-              })}
-            </GlideComponent>
-          </Colxx>
-        </Row>
-        <Row>
-          <Colxx xxs="12">
-            <CardTitle>
-              <IntlMessages id="carousel.without-controls" />
-            </CardTitle>
-          </Colxx>
-          <Colxx xxs="12" className="pl-0 pr-0 mb-5">
-          <GlideComponent settings={
-            {
+const CarouselUi = ({ match }) => {
+  return (
+    <>
+      <Row>
+        <Colxx xxs="12">
+          <Breadcrumb heading="menu.carousel" match={match} />
+          <Separator className="mb-5" />
+        </Colxx>
+      </Row>
+      <Row>
+        <Colxx xxs="12">
+          <CardTitle>
+            <IntlMessages id="carousel.basic" />
+          </CardTitle>
+        </Colxx>
+        <Colxx xxs="12" className="pl-0 pr-0 mb-5">
+          <GlideComponent
+            settings={{
+              gap: 5,
+              perView: 3,
+              type: 'carousel',
+              breakpoints: {
+                600: { perView: 1 },
+                1400: { perView: 2 },
+              },
+            }}
+          >
+            {items.map((item) => {
+              return (
+                <div key={item.id}>
+                  <BasicCarouselItem {...item} />
+                </div>
+              );
+            })}
+          </GlideComponent>
+        </Colxx>
+      </Row>
+      <Row>
+        <Colxx xxs="12">
+          <CardTitle>
+            <IntlMessages id="carousel.single" />
+          </CardTitle>
+        </Colxx>
+        <Colxx xxs="12" className="pl-0 pr-0 mb-5">
+          <GlideComponent
+            settings={{
+              gap: 5,
+              perView: 1,
+              type: 'carousel',
+            }}
+          >
+            {items.map((item) => {
+              return (
+                <div key={item.id}>
+                  <SingleCarouselItem {...item} />
+                </div>
+              );
+            })}
+          </GlideComponent>
+        </Colxx>
+      </Row>
+      <Row>
+        <Colxx xxs="12">
+          <CardTitle>
+            <IntlMessages id="carousel.without-controls" />
+          </CardTitle>
+        </Colxx>
+        <Colxx xxs="12" className="pl-0 pr-0 mb-5">
+          <GlideComponent
+            settings={{
               gap: 5,
               perView: 4,
-              type: "carousel",
+              type: 'carousel',
               breakpoints: {
                 480: { perView: 1 },
                 800: { perView: 2 },
-                1200: { perView: 3 }
+                1200: { perView: 3 },
               },
-              hideNav: true
-            }
-          }>
-          {items.map(item => {
-            return (
-              <div key={item.id}>
-                <NoControlCarouselItem {...item} />
-              </div>
-            );
-          })}
+              hideNav: true,
+            }}
+          >
+            {items.map((item) => {
+              return (
+                <div key={item.id}>
+                  <NoControlCarouselItem {...item} />
+                </div>
+              );
+            })}
           </GlideComponent>
-          </Colxx>
-        </Row>
-      </Fragment>
-    );
-  }
-}
+        </Colxx>
+      </Row>
+    </>
+  );
+};
+
+export default CarouselUi;
