@@ -189,7 +189,7 @@ class TopNav extends Component {
 
   render() {
     const { containerClassnames, menuClickCount, locale } = this.props;
-    const { messages } = this.props.intl;
+    // const { messages } = this.props.intl;
     return (
       <nav className="navbar fixed-top">
         <div className="d-flex align-items-center navbar-left">

@@ -10,11 +10,11 @@ import { IntlProvider } from "react-intl";
 import "./helpers/Firebase";
 import AppLocale from "./lang";
 import ColorSwitcher from "./components/common/ColorSwitcher";
-import NotificationContainer from "./components/common/react-notifications/NotificationContainer";
+// import NotificationContainer from "./components/common/react-notifications/NotificationContainer";
 import {
   isMultiColorActive,
   isDemo,
-  adminRoot,
+  // adminRoot,
 } from "./constants/defaultValues";
 import { getDirection } from "./helpers/Utils";
 
@@ -24,12 +24,12 @@ const ViewMain = React.lazy(() =>
 const ViewApp = React.lazy(() =>
   import(/* webpackChunkName: "views-app" */ "./views/app")
 );
-const ViewUser = React.lazy(() =>
-  import(/* webpackChunkName: "views-user" */ "./views/user")
-);
-const ViewError = React.lazy(() =>
-  import(/* webpackChunkName: "views-error" */ "./views/error")
-);
+// const ViewUser = React.lazy(() =>
+//   import(/* webpackChunkName: "views-user" */ "./views/user")
+// );
+// const ViewError = React.lazy(() =>
+//   import(/* webpackChunkName: "views-error" */ "./views/error")
+// );
 
 const AuthRoute = ({ component: Component, authUser, ...rest }) => {
   return (

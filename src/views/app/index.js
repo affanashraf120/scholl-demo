@@ -5,9 +5,9 @@ import { connect } from "react-redux";
 import AppLayout from "../../layout/AppLayout";
 
 //Custom pages added
-import Students from "./customPages/Students";
-import Teachers from "./customPages/Teachers";
-import Parents from "./customPages/Parents";
+// import Students from "./customPages/Students";
+// import Teachers from "./customPages/Teachers";
+// import Parents from "./customPages/Parents";
 import Dashboard from "./customPages/Dashboard";
 
 // const Dashboards = React.lazy(() =>
